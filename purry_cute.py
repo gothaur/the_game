@@ -19,6 +19,8 @@ def get_image(path):
 BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
            get_image("img/trees_and_bushes_1.png"), get_image("img/ground.png")]
 
+PROJECTILE_IMG = get_image("img/projectile.png")
+
 PENGUIN_IMGS = []
 
 for i in range(1, 17):
@@ -45,9 +47,9 @@ class Background:
     def get_y(self):
         return self.y
 
-    def move(self):
-        self.ground_x1 -= self.VEL_GROUND
-        self.ground_x2 -= self.VEL_GROUND
+    def move(self, player):
+        self.ground_x1 -= self.VEL_GROUND + player.get_speed()
+        self.ground_x2 -= self.VEL_GROUND + player.get_speed()
         self.trees_x1 -= self.VEL_TREES_AND_BUSHES
         self.trees_x2 -= self.VEL_TREES_AND_BUSHES
         self.dist_trees_x1 -= self.VEL_DISTANT_TREES
@@ -71,7 +73,7 @@ class Background:
         if self.dist_trees_x2 + self.WIDTH < 0:
             self.dist_trees_x2 = self.dist_trees_x1 + self.WIDTH
 
-    def draw(self, win, list_of_objects):
+    def draw(self, win, list_of_objects, projectiles):
         win.blit(self.IMG[0], (0, 0))
         win.blit(self.IMG[1], (self.dist_trees_x1, 0))
         win.blit(self.IMG[1], (self.dist_trees_x2, 0))
@@ -83,6 +85,9 @@ class Background:
         list_of_objects.sort(key=lambda x: x.y)
         for obj in list_of_objects:
             obj.draw()
+
+        for projectile in projectiles:
+            projectile.draw()
 
 
 class Penguin:
@@ -100,6 +105,9 @@ class Penguin:
         self.lives = lives
         self.moving_backward = False
         self.enemy = enemy
+
+    def get_speed(self):
+        return self.vel_forward
 
     def get_y(self):
         return self.y
@@ -122,7 +130,7 @@ class Penguin:
                 self.x -= 8
         else:
             self.moving_backward = False
-            if key[pygame.K_UP] and self.y > 490:
+            if key[pygame.K_UP] and self.y > 595 - self.HEIGHT:
                 self.y -= 3
             if key[pygame.K_DOWN] and self.y < 620:
                 self.y += 3
@@ -153,8 +161,31 @@ class Penguin:
 
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
-        print(pygame.mask.from_surface(self.img))
         return pygame.mask.from_surface(self.img)
+
+
+class Projectile:
+    IMG = PROJECTILE_IMG
+
+    def __init__(self, penguin):
+        self.x = penguin.get_x() + penguin.get_height()
+        self.y = int(penguin.get_y() + penguin.get_width() / 2)
+
+    def draw(self):
+        screen.blit(self.IMG, (self.x, self.y))
+
+    def move(self):
+        self.x += 6
+
+    def collide(self, penguin):
+        penguin_mask = penguin.get_mask()
+        projectile_mask = pygame.mask.from_surface(self.IMG)
+
+        offset = (self.x - penguin.get_x(), self.y - penguin.get_y())
+        point = penguin_mask.overlap(projectile_mask, offset)
+        if point:
+            return True
+        return False
 
 
 pygame.init()
@@ -163,6 +194,7 @@ done = False
 bg = Background()
 player = Penguin(100, 620, 2)
 list_to_draw = [player, Penguin(1200, 620, enemy=True)]
+bullets = []
 clock = pygame.time.Clock()
 
 while not done and player.is_alive():
@@ -171,9 +203,32 @@ while not done and player.is_alive():
             done = True
 
     add_enemy = False
-    rem = []
+    rem_p = []
+    rem_b = []
     pressed = pygame.key.get_pressed()
     player.move(pressed)
+
+    if pressed[pygame.K_SPACE]:
+        bullets.append(Projectile(player))
+
+    for bullet in bullets:
+        for i in range(len(list_to_draw)):
+            if bullet.collide(list_to_draw[i]):
+                rem_p.append(list_to_draw[i])
+                rem_b.append(bullet)
+                print(f"zawartosc listy rem_p {rem_p}, rem_b {rem_b}")
+
+        bullet.move()
+
+    for r in rem_p:
+        print(f"obiekt do usuniecia w rem_p {r}")
+        list_to_draw.remove(r)
+        print("usunieto z rem_p")
+
+    for r in rem_b:
+        print(f"obiekt do usuniecia w rem_b{r}")
+        bullets.remove(r)
+        print("usunieto z rem_b")
 
     for i in range(len(list_to_draw)):
         list_to_draw[i].move(pressed)
@@ -181,7 +236,7 @@ while not done and player.is_alive():
         if len(list_to_draw) < 6 and list_to_draw[-1].get_x() < distance:
             list_to_draw.append(Penguin(1100, random.randint(520, 620), enemy=True))
 
-    bg.draw(screen, list_to_draw)
-    bg.move()
+    bg.draw(screen, list_to_draw, bullets)
+    bg.move(player)
     pygame.display.flip()
     clock.tick(32)
