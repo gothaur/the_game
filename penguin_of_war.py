@@ -199,7 +199,6 @@ class Penguin:
 
     def get_mask(self):
         """
-
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
         return pygame.mask.from_surface(self.img)
@@ -210,7 +209,6 @@ class Projectile:
 
     def __init__(self, penguin):
         """
-
         :type penguin: object
         """
         self.direction = penguin.moving_backward
@@ -222,7 +220,8 @@ class Projectile:
         self.penguin = penguin
 
     def draw(self):
-        screen.blit(self.IMG, (self.x, self.y))
+        rotated_image = pygame.transform.rotate(self.IMG, 90)
+        screen.blit(rotated_image, (self.x, self.y))
 
     def move(self):
         if self.direction:
@@ -267,7 +266,9 @@ while not done and player.is_alive():
             continue
         for i in range(len(list_to_draw)):
             if bullet.collide(list_to_draw[i]):
-                rem_p.append(list_to_draw[i])
+                list_to_draw[i].lives -= 1
+                if not list_to_draw[i].is_alive():
+                    rem_p.append(list_to_draw[i])
                 rem_b.append(bullet)
 
         bullet.move()
