@@ -24,6 +24,9 @@ PENGUIN_IMGS = []
 for i in range(1, 17):
     PENGUIN_IMGS.append(get_image(f"img/penguin/Armature_run_{i}.png"))
 
+RUNNING_IMG = get_image("img/penguin/run.png")
+coord = [(x, y, 78, 73) for y in range(0, 147, 73) for x in range(0, 313, 78)]
+
 HEIGHT = BG_IMGS[0].get_height()
 WIDTH = BG_IMGS[0].get_width()
 
@@ -102,7 +105,7 @@ class Background:
         # list of penguins must be in correct order to draw
         list_of_objects.sort(key=lambda x: x.y)
         for obj in list_of_objects:
-            obj.draw()
+            obj.draw_1()
 
         for projectile in projectiles:
             projectile.draw()
@@ -110,6 +113,7 @@ class Background:
 
 class Penguin:
     IMGS = PENGUIN_IMGS
+    RUN = RUNNING_IMG
 
     def __init__(self, x, y, lives=1, enemy=False):
         self.x = x
@@ -142,6 +146,9 @@ class Penguin:
 
     def is_alive(self):
         return self.lives > 0
+
+    def fire(self, bullet):
+        pass
 
     def move(self, key):
         if self.enemy:
@@ -178,6 +185,18 @@ class Penguin:
 
         self.img_count += 1
 
+    def draw_1(self):
+        if self.img_count > 14:
+            self.img_count = 0
+
+        # we want to know if character moves backward to reverse image
+        if self.moving_backward or self.enemy:
+            screen.blit(pygame.transform.flip(RUNNING_IMG, True, False), (self.x, self.y), coord[-self.img_count])
+        else:
+            screen.blit(RUNNING_IMG, (self.x, self.y), coord[self.img_count])
+
+        self.img_count += 1
+
     def get_mask(self):
         """
 
@@ -190,7 +209,15 @@ class Projectile:
     IMG = PROJECTILE_IMG
 
     def __init__(self, penguin):
-        self.x = penguin.get_x() + penguin.get_height()
+        """
+
+        :type penguin: object
+        """
+        self.direction = penguin.moving_backward
+        if self.direction:
+            self.x = penguin.get_x() - 10
+        else:
+            self.x = penguin.get_x() + penguin.get_height()
         self.y = int(penguin.get_y() + penguin.get_width() / 2)
         self.penguin = penguin
 
@@ -198,7 +225,10 @@ class Projectile:
         screen.blit(self.IMG, (self.x, self.y))
 
     def move(self):
-        self.x += self.penguin.get_vel() + 6
+        if self.direction:
+            self.x -= (self.penguin.get_vel() + 15)
+        else:
+            self.x += self.penguin.get_vel() + 15
 
     def collide(self, penguin):
         penguin_mask = penguin.get_mask()
