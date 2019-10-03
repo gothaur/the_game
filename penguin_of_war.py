@@ -147,8 +147,11 @@ class Penguin:
     def is_alive(self):
         return self.lives > 0
 
-    def fire(self, bullet):
-        pass
+    def fire(self, bullets):
+        if self.enemy and random.randint(1, 100) < 11:
+            bullets.append(Projectile(self))
+            print(f"fireing!{Projectile(self)}")
+            # return Projectile(self)
 
     def move(self, key):
         if self.enemy:
@@ -263,7 +266,6 @@ while not done and player.is_alive():
     for bullet in bullets:
         if bullet.x >= WIDTH:
             rem_b.append(bullet)
-            continue
         for i in range(len(list_to_draw)):
             if bullet.collide(list_to_draw[i]):
                 list_to_draw[i].lives -= 1
@@ -287,6 +289,7 @@ while not done and player.is_alive():
 
     for i in range(len(list_to_draw)):
         list_to_draw[i].move(pressed)
+        list_to_draw[i].fire(bullets)
         distance = random.randint(600, 950) - random.randint(0, 100)
         if len(list_to_draw) < 6 and list_to_draw[-1].get_x() < distance:
             list_to_draw.append(Penguin(1100, random.randint(520, 620), enemy=True))
