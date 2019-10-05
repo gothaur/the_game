@@ -148,10 +148,8 @@ class Penguin:
         return self.lives > 0
 
     def fire(self, bullets):
-        if self.enemy and random.randint(1, 100) < 11:
+        if self.enemy and random.randint(1, 100) < 2:
             bullets.append(Projectile(self))
-            print(f"fireing!{Projectile(self)}")
-            # return Projectile(self)
 
     def move(self, key):
         if self.enemy:
@@ -215,7 +213,7 @@ class Projectile:
         :type penguin: object
         """
         self.direction = penguin.moving_backward
-        if self.direction:
+        if self.direction or penguin.enemy:
             self.x = penguin.get_x() - 10
         else:
             self.x = penguin.get_x() + penguin.get_height()
@@ -227,7 +225,7 @@ class Projectile:
         screen.blit(rotated_image, (self.x, self.y))
 
     def move(self):
-        if self.direction:
+        if self.direction or self.penguin.enemy:
             self.x -= (self.penguin.get_vel() + 15)
         else:
             self.x += self.penguin.get_vel() + 15
@@ -278,13 +276,13 @@ while not done and player.is_alive():
     for r in rem_p:
         try:
             list_to_draw.remove(r)
-        except Exception:
+        except ValueError:
             print("Attempt to remove non existing penguin")
 
     for r in rem_b:
         try:
             bullets.remove(r)
-        except Exception:
+        except ValueError:
             print("Attempt to remove non existing bullet")
 
     for i in range(len(list_to_draw)):
