@@ -221,16 +221,29 @@ class Projectile:
         self.penguin = penguin
 
     def draw(self):
+        """
+        Draws projectile on the screen
+        :return: None
+        """
         rotated_image = pygame.transform.rotate(self.IMG, 90)
         screen.blit(rotated_image, (self.x, self.y))
 
     def move(self):
+        """
+        Moves projectile on the screen
+        :return: None
+        """
         if self.direction or self.penguin.enemy:
             self.x -= (self.penguin.get_vel() + 15)
         else:
             self.x += self.penguin.get_vel() + 15
 
     def collide(self, penguin):
+        """
+        Checks if projectile collides with penguin
+        :param penguin:
+        :return: True if collided
+        """
         penguin_mask = penguin.get_mask()
         projectile_mask = pygame.mask.from_surface(self.IMG)
 
