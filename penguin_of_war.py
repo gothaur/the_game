@@ -132,8 +132,11 @@ class Penguin:
         return self.lives > 0
 
     def fire(self, bullet_list):
-        if self.enemy and random.randint(1, 100) < 2:
+        if self.enemy and self.x < WIDTH and random.randint(1, 100) < 5:
             bullet_list.append(Projectile(self))
+
+    def chanse_to_drop(self):
+        return random.randint(1, 100) < 15
 
     def move(self, key):
         if self.enemy:
@@ -192,9 +195,11 @@ class Penguin:
 class Projectile:
     IMG = PROJECTILE_IMG
 
-    def __init__(self, penguin):
+    def __init__(self, penguin, loot=False):
         """
-        :type penguin: object
+
+        :param penguin: penguin who fired or dropped object
+        :param loot: type bool determinate if can buff player
         """
         self.direction = penguin.moving_backward
         if self.direction or penguin.enemy:
@@ -203,13 +208,17 @@ class Projectile:
             self.x = penguin.x + penguin.get_height()
         self.y = int(penguin.y + penguin.get_width() / 2)
         self.penguin = penguin
+        self.loot = loot
 
     def draw(self):
         """
         Draws projectile on the screen
         :return: None
         """
-        rotated_image = pygame.transform.rotate(self.IMG, 90)
+        if self.direction or self.penguin.enemy:
+            rotated_image = pygame.transform.rotate(self.IMG, -90)
+        else:
+            rotated_image = pygame.transform.rotate(self.IMG, 90)
         screen.blit(rotated_image, (self.x, self.y))
 
     def move(self):
@@ -233,6 +242,28 @@ class Projectile:
 
         offset = (self.x - penguin.get_x(), self.y - penguin.get_y())
         return penguin_mask.overlap(projectile_mask, offset)
+
+
+class Loot:
+    """
+    Loot object witch can buff our penguin
+    """
+
+    def __init__(self, p, bg):
+        """
+
+        :param p: penguin witch dropped item
+        :param bg: background [needed to determinate position on the screen
+        """
+        self.x = p.x
+        self.y = p.y
+        self.vel = bg.VEL_GROUND
+
+    def move(self):
+        self.x -= self.vel
+
+    def draw(self):
+        screen.blit(pygame.transform.flip(PENGUIN_IMGS[0], True, True), (self.x, self.y))
 
 
 pygame.init()
@@ -263,8 +294,12 @@ while not done and player.is_alive():
             rem_b.append(bullet)
         for i in range(len(list_to_draw)):
             if bullet.collide(list_to_draw[i]):
+                p = list_to_draw[i]
                 list_to_draw[i].lives -= 1
                 if not list_to_draw[i].is_alive():
+                    if p.chanse_to_drop():
+                        print('upuscilem cos')
+                        bullets.append(Projectile(p))
                     rem_p.append(list_to_draw[i])
                 rem_b.append(bullet)
 
