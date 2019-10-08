@@ -51,29 +51,13 @@ class Background:
     def get_y(self):
         return self.y
 
-    def move(self, player):
-        if player.is_moving:
-            if player.moving_backward:
-                self.ground_x1 -= (self.VEL_GROUND - player.get_vel())
-                self.ground_x2 -= (self.VEL_GROUND - player.get_vel())
-                self.trees_x1 -= self.VEL_TREES_AND_BUSHES - player.get_vel()
-                self.trees_x2 -= self.VEL_TREES_AND_BUSHES - player.get_vel()
-                self.dist_trees_x1 -= self.VEL_DISTANT_TREES - player.get_vel()
-                self.dist_trees_x2 -= self.VEL_DISTANT_TREES - player.get_vel()
-            else:
-                self.ground_x1 -= (self.VEL_GROUND + player.get_vel())
-                self.ground_x2 -= (self.VEL_GROUND + player.get_vel())
-                self.trees_x1 -= self.VEL_TREES_AND_BUSHES + player.get_vel()
-                self.trees_x2 -= self.VEL_TREES_AND_BUSHES + player.get_vel()
-                self.dist_trees_x1 -= self.VEL_DISTANT_TREES + player.get_vel()
-                self.dist_trees_x2 -= self.VEL_DISTANT_TREES + player.get_vel()
-        else:
-            self.ground_x1 -= self.VEL_GROUND
-            self.ground_x2 -= self.VEL_GROUND
-            self.trees_x1 -= self.VEL_TREES_AND_BUSHES
-            self.trees_x2 -= self.VEL_TREES_AND_BUSHES
-            self.dist_trees_x1 -= self.VEL_DISTANT_TREES
-            self.dist_trees_x2 -= self.VEL_DISTANT_TREES
+    def move(self):
+        self.ground_x1 -= self.VEL_GROUND
+        self.ground_x2 -= self.VEL_GROUND
+        self.trees_x1 -= self.VEL_TREES_AND_BUSHES
+        self.trees_x2 -= self.VEL_TREES_AND_BUSHES
+        self.dist_trees_x1 -= self.VEL_DISTANT_TREES
+        self.dist_trees_x2 -= self.VEL_DISTANT_TREES
 
         if self.ground_x1 + self.WIDTH < 0:
             self.ground_x1 = self.ground_x2 + self.WIDTH
@@ -147,9 +131,9 @@ class Penguin:
     def is_alive(self):
         return self.lives > 0
 
-    def fire(self, bullets):
+    def fire(self, bullet_list):
         if self.enemy and random.randint(1, 100) < 2:
-            bullets.append(Projectile(self))
+            bullet_list.append(Projectile(self))
 
     def move(self, key):
         if self.enemy:
@@ -159,9 +143,9 @@ class Penguin:
             self.moving_backward = False
             self.is_moving = False
             if key[pygame.K_UP] and self.y > 595 - self.HEIGHT:
-                self.y -= 3
+                self.y -= 5
             if key[pygame.K_DOWN] and self.y < 620:
-                self.y += 3
+                self.y += 5
             if key[pygame.K_LEFT] and self.x > 0:
                 self.x -= self.vel_backward
                 self.moving_backward = True
@@ -214,10 +198,10 @@ class Projectile:
         """
         self.direction = penguin.moving_backward
         if self.direction or penguin.enemy:
-            self.x = penguin.get_x() - 10
+            self.x = penguin.x - 10
         else:
-            self.x = penguin.get_x() + penguin.get_height()
-        self.y = int(penguin.get_y() + penguin.get_width() / 2)
+            self.x = penguin.x + penguin.get_height()
+        self.y = int(penguin.y + penguin.get_width() / 2)
         self.penguin = penguin
 
     def draw(self):
@@ -275,7 +259,7 @@ while not done and player.is_alive():
     player.move(pressed)
 
     for bullet in bullets:
-        if bullet.x >= WIDTH:
+        if 0 > bullet.x >= WIDTH:
             rem_b.append(bullet)
         for i in range(len(list_to_draw)):
             if bullet.collide(list_to_draw[i]):
@@ -290,22 +274,28 @@ while not done and player.is_alive():
         try:
             list_to_draw.remove(r)
         except ValueError:
-            print("Attempt to remove non existing penguin")
+            # if an attempt to remove occurs there is no need to take action
+            pass
 
     for r in rem_b:
         try:
             bullets.remove(r)
         except ValueError:
-            print("Attempt to remove non existing bullet")
+            # if an attempt to remove occurs there is no need to take action
+            pass
 
     for i in range(len(list_to_draw)):
         list_to_draw[i].move(pressed)
         list_to_draw[i].fire(bullets)
-        distance = random.randint(600, 950) - random.randint(0, 100)
-        if len(list_to_draw) < 6 and list_to_draw[-1].get_x() < distance:
+        # we want different distance between next enemies
+        distance = random.randint(600, 950)
+        # we have to determinate last enemy to calculate distance between them
+        max_dist = max(list_to_draw, key=lambda x: x.x)
+        last = max_dist.get_x()
+        if len(list_to_draw) < 6 and last < distance:
             list_to_draw.append(Penguin(1100, random.randint(520, 620), enemy=True))
 
     bg.draw(screen, list_to_draw, bullets)
-    bg.move(player)
+    bg.move()
     pygame.display.flip()
     clock.tick(32)
