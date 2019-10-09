@@ -1,7 +1,7 @@
 import pygame
 import os
 import random
-import background
+from background import Background
 
 
 def get_image(path):
@@ -14,9 +14,9 @@ def get_image(path):
     return pygame.image.load(canonicalized_path)
 
 
-# # list of images to draw a background
-# BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
-#            get_image("img/trees_and_bushes_1.png"), get_image("img/ground.png")]
+# list of images to draw a background
+BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
+           get_image("img/trees_and_bushes_1.png"), get_image("img/ground.png")]
 
 PROJECTILE_IMG = get_image("img/projectile.png")
 HEALTH_IMG = get_image("img/health.png")
@@ -29,8 +29,8 @@ for i in range(1, 17):
 RUNNING_IMG = get_image("img/penguin/run.png")
 coord = [(x, y, 78, 73) for y in range(0, 147, 73) for x in range(0, 313, 78)]
 
-HEIGHT = background.BG_IMGS[0].get_height()
-WIDTH = background.BG_IMGS[0].get_width()
+HEIGHT = BG_IMGS[0].get_height()
+WIDTH = BG_IMGS[0].get_width()
 
 
 class Penguin:
@@ -203,7 +203,7 @@ class Loot:
 pygame.init()
 screen = pygame.display.set_mode((1024, 773))
 done = False
-bg = background.Background()
+bg = Background(BG_IMGS)
 player = Penguin(100, 620, 2)
 list_to_draw = [player, Penguin(1200, 620, enemy=True)]
 loot_list = []
