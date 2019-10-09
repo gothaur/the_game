@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import background
 
 
 def get_image(path):
@@ -13,11 +14,12 @@ def get_image(path):
     return pygame.image.load(canonicalized_path)
 
 
-# list of images to draw a background
-BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
-           get_image("img/trees_and_bushes_1.png"), get_image("img/ground.png")]
+# # list of images to draw a background
+# BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
+#            get_image("img/trees_and_bushes_1.png"), get_image("img/ground.png")]
 
 PROJECTILE_IMG = get_image("img/projectile.png")
+HEALTH_IMG = get_image("img/health.png")
 
 # list of penguin images required to make movement animation
 PENGUIN_IMGS = []
@@ -27,76 +29,11 @@ for i in range(1, 17):
 RUNNING_IMG = get_image("img/penguin/run.png")
 coord = [(x, y, 78, 73) for y in range(0, 147, 73) for x in range(0, 313, 78)]
 
-HEIGHT = BG_IMGS[0].get_height()
-WIDTH = BG_IMGS[0].get_width()
-
-
-class Background:
-    VEL_GROUND = 3
-    VEL_TREES_AND_BUSHES = 2
-    VEL_DISTANT_TREES = 1
-    WIDTH = BG_IMGS[0].get_width()
-    IMG = BG_IMGS
-    TREE_HEIGHT = IMG[0].get_height() - IMG[2].get_height()
-
-    def __init__(self, y=0):
-        self.y = y
-        self.ground_x1 = 0
-        self.ground_x2 = self.WIDTH
-        self.trees_x1 = 0
-        self.trees_x2 = self.WIDTH
-        self.dist_trees_x1 = 0
-        self.dist_trees_x2 = self.WIDTH
-
-    def get_y(self):
-        return self.y
-
-    def move(self):
-        self.ground_x1 -= self.VEL_GROUND
-        self.ground_x2 -= self.VEL_GROUND
-        self.trees_x1 -= self.VEL_TREES_AND_BUSHES
-        self.trees_x2 -= self.VEL_TREES_AND_BUSHES
-        self.dist_trees_x1 -= self.VEL_DISTANT_TREES
-        self.dist_trees_x2 -= self.VEL_DISTANT_TREES
-
-        if self.ground_x1 + self.WIDTH < 0:
-            self.ground_x1 = self.ground_x2 + self.WIDTH
-
-        if self.ground_x2 + self.WIDTH < 0:
-            self.ground_x2 = self.ground_x1 + self.WIDTH
-
-        if self.trees_x1 + self.WIDTH < 0:
-            self.trees_x1 = self.trees_x2 + self.WIDTH
-
-        if self.trees_x2 + self.WIDTH < 0:
-            self.trees_x2 = self.trees_x1 + self.WIDTH
-
-        if self.dist_trees_x1 + self.WIDTH < 0:
-            self.dist_trees_x1 = self.dist_trees_x2 + self.WIDTH
-
-        if self.dist_trees_x2 + self.WIDTH < 0:
-            self.dist_trees_x2 = self.dist_trees_x1 + self.WIDTH
-
-    def draw(self, win, list_of_objects, projectiles):
-        win.blit(self.IMG[0], (0, 0))
-        win.blit(self.IMG[1], (self.dist_trees_x1, 0))
-        win.blit(self.IMG[1], (self.dist_trees_x2, 0))
-        win.blit(self.IMG[2], (self.trees_x1, self.TREE_HEIGHT))
-        win.blit(self.IMG[2], (self.trees_x2, self.TREE_HEIGHT))
-        win.blit(self.IMG[3], (self.ground_x1, 90))
-        win.blit(self.IMG[3], (self.ground_x2, 90))
-
-        # list of penguins must be in correct order to draw
-        list_of_objects.sort(key=lambda x: x.y)
-        for obj in list_of_objects:
-            obj.draw_1()
-
-        for projectile in projectiles:
-            projectile.draw()
+HEIGHT = background.BG_IMGS[0].get_height()
+WIDTH = background.BG_IMGS[0].get_width()
 
 
 class Penguin:
-    IMGS = PENGUIN_IMGS
     RUN = RUNNING_IMG
 
     def __init__(self, x, y, lives=1, enemy=False):
@@ -105,9 +42,9 @@ class Penguin:
         self.vel_forward = 5
         self.vel_backward = 3
         self.img_count = 0
-        self.img = self.IMGS[0]
-        self.WIDTH = self.img.get_width()
-        self.HEIGHT = self.img.get_height()
+        self.img = PENGUIN_IMGS[0]
+        self.WIDTH = 78
+        self.HEIGHT = 73
         self.lives = lives
         self.moving_backward = False
         self.enemy = enemy
@@ -123,7 +60,7 @@ class Penguin:
         return self.x
 
     def get_height(self):
-        return self.img.get_height()
+        return self.HEIGHT
 
     def get_width(self):
         return self.WIDTH
@@ -135,7 +72,7 @@ class Penguin:
         if self.enemy and self.x < WIDTH and random.randint(1, 100) < 5:
             bullet_list.append(Projectile(self))
 
-    def chanse_to_drop(self):
+    def chance_to_drop(self):
         return random.randint(1, 100) < 15
 
     def move(self, key):
@@ -158,22 +95,6 @@ class Penguin:
                 self.x += self.vel_forward
 
     def draw(self):
-        """
-        Determinate direction and draw character on a screen
-        :return:
-        """
-        if self.img_count > 15:
-            self.img_count = 0
-
-        # we want to know if character moves backward to reverse image
-        if self.moving_backward or self.enemy:
-            screen.blit(pygame.transform.flip(PENGUIN_IMGS[self.img_count], True, False), (self.x, self.y))
-        else:
-            screen.blit(PENGUIN_IMGS[self.img_count], (self.x, self.y))
-
-        self.img_count += 1
-
-    def draw_1(self):
         if self.img_count > 14:
             self.img_count = 0
 
@@ -258,20 +179,34 @@ class Loot:
         self.x = p.x
         self.y = p.y
         self.vel = bg.VEL_GROUND
+        self.img = HEALTH_IMG
 
     def move(self):
         self.x -= self.vel
 
     def draw(self):
-        screen.blit(pygame.transform.flip(PENGUIN_IMGS[0], True, True), (self.x, self.y))
+        screen.blit(self.img, (self.x, self.y))
+
+    def collide(self, penguin):
+        """
+        Checks if projectile collides with penguin
+        :param penguin:
+        :return: True if collided
+        """
+        penguin_mask = penguin.get_mask()
+        loot_mask = pygame.mask.from_surface(self.img)
+
+        offset = (self.x - penguin.get_x(), self.y - penguin.get_y())
+        return penguin_mask.overlap(loot_mask, offset)
 
 
 pygame.init()
 screen = pygame.display.set_mode((1024, 773))
 done = False
-bg = Background()
+bg = background.Background()
 player = Penguin(100, 620, 2)
 list_to_draw = [player, Penguin(1200, 620, enemy=True)]
+loot_list = []
 bullets = []
 clock = pygame.time.Clock()
 
@@ -297,13 +232,16 @@ while not done and player.is_alive():
                 p = list_to_draw[i]
                 list_to_draw[i].lives -= 1
                 if not list_to_draw[i].is_alive():
-                    if p.chanse_to_drop():
+                    if p.chance_to_drop():
                         print('upuscilem cos')
-                        bullets.append(Projectile(p))
+                        loot_list.append(Loot(p, bg))
                     rem_p.append(list_to_draw[i])
                 rem_b.append(bullet)
 
         bullet.move()
+
+    for loot in loot_list:
+        loot.move()
 
     for r in rem_p:
         try:
@@ -330,7 +268,7 @@ while not done and player.is_alive():
         if len(list_to_draw) < 6 and last < distance:
             list_to_draw.append(Penguin(1100, random.randint(520, 620), enemy=True))
 
-    bg.draw(screen, list_to_draw, bullets)
+    bg.draw(screen, list_to_draw, bullets, loot_list)
     bg.move()
     pygame.display.flip()
     clock.tick(32)
