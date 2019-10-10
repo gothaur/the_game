@@ -6,17 +6,17 @@ class Loot:
     Loot object witch can buff our penguin
     """
 
-    def __init__(self, p, bg, img):
+    def __init__(self, penguin, background, loot_img):
         """
 
-        :param p: penguin witch dropped item
-        :param bg: background [needed to determinate position on the screen
-        :param img: image of dropped item
+        :param penguin: penguin witch dropped item
+        :param background: background [needed to determinate position on the screen
+        :param loot_img: image of dropped item
         """
-        self.x = p.x
-        self.y = p.y
-        self.vel = bg.VEL_GROUND
-        self.img = img
+        self.x = penguin.x
+        self.y = penguin.y
+        self.vel = background.VEL_GROUND
+        self.img = loot_img
 
     def move(self):
         self.x -= self.vel
@@ -35,3 +35,28 @@ class Loot:
 
         offset = (self.x - penguin.get_x(), self.y - penguin.get_y())
         return penguin_mask.overlap(loot_mask, offset)
+
+    def buff(self):
+        pass
+
+
+class Health(Loot):
+
+    def __init__(self, penguin, background, loot_img):
+        super().__init__(penguin, background, loot_img)
+
+    def buff(self, penguin):
+        penguin.lives += 1
+        print("Live added")
+
+
+class Ammo(Loot):
+
+    def __init__(self, penguin, background, loot_img):
+        super().__init__(penguin, background, loot_img)
+
+
+class Trap(Loot):
+
+    def __init__(self, penguin, background, loot_img):
+        super().__init__(penguin, background, loot_img)

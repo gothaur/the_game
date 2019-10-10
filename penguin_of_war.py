@@ -4,7 +4,7 @@ import random
 from background import Background
 from projectile import Projectile
 from penguin import Penguin
-from loot import Loot
+from loot import Health
 
 
 def get_image(path):
@@ -55,6 +55,7 @@ while not done and player.is_alive():
     add_enemy = False
     rem_p = []
     rem_b = []
+    rem_l = []
 
     pressed = pygame.key.get_pressed()
     player.move(pressed)
@@ -62,19 +63,25 @@ while not done and player.is_alive():
     for bullet in bullets:
         if 0 > bullet.x >= WIDTH:
             rem_b.append(bullet)
-        for i in range(len(list_to_draw)):
-            if bullet.collide(list_to_draw[i]):
-                p = list_to_draw[i]
-                list_to_draw[i].lives -= 1
-                if not list_to_draw[i].is_alive():
+        for object in list_to_draw:
+            if bullet.collide(object):
+                p = object
+                object.lives -= 1
+                if not object.is_alive():
                     if p.chance_to_drop():
-                        loot_list.append(Loot(p, bg, HEALTH_IMG))
-                    rem_p.append(list_to_draw[i])
+                        loot_list.append(Health(p, bg, HEALTH_IMG))
+                        print("upuscilem rzecz")
+                    rem_p.append(object)
                 rem_b.append(bullet)
 
         bullet.move()
 
     for loot in loot_list:
+        for penguin in list_to_draw:
+            if loot.collide(penguin) and not penguin.enemy:
+                loot.buff(penguin)
+                rem_l.append(loot)
+
         loot.move()
 
     for r in rem_p:
@@ -90,6 +97,14 @@ while not done and player.is_alive():
         except ValueError:
             # if an attempt to remove occurs there is no need to take action
             pass
+
+    for r in rem_l:
+        try:
+            loot_list.remove(r)
+            print('loot podniesiony')
+        except ValueError:
+            # if an attempt to remove occurs there is no need to take action
+            print("nastapila nieudana proba usuniecia lootu")
 
     for i in range(len(list_to_draw)):
         list_to_draw[i].move(pressed)

@@ -51,11 +51,12 @@ class Penguin:
         return self.lives > 0
 
     def fire(self, bullet_list, projectile):
-        if self.enemy and self.x < self.bg_width and random.randint(1, 100) < 5:
+        if self.enemy and self.x < self.bg_width and random.randint(1, 100) < -5:
             bullet_list.append(projectile)
 
     def chance_to_drop(self):
-        return random.randint(1, 100) < 15
+        print("szansa na upuszczenie")
+        return random.randint(1, 100) < 150
 
     def move(self, key):
         if self.enemy:
