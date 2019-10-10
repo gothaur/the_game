@@ -56,10 +56,10 @@ class Background:
         # list of penguins must be in correct order to draw
         list_of_objects.sort(key=lambda x: x.y)
         for obj in list_of_objects:
-            obj.draw()
+            obj.draw(win)
 
         for projectile in projectiles:
-            projectile.draw()
+            projectile.draw(win)
 
         for loot in loot_list:
-            loot.draw()
+            loot.draw(win)
