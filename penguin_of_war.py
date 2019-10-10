@@ -35,42 +35,6 @@ coord = [(x, y, 78, 73) for y in range(0, 147, 73) for x in range(0, 313, 78)]
 HEIGHT = BG_IMGS[0].get_height()
 WIDTH = BG_IMGS[0].get_width()
 
-
-# class Loot:
-#     """
-#     Loot object witch can buff our penguin
-#     """
-#
-#     def __init__(self, p, bg):
-#         """
-#
-#         :param p: penguin witch dropped item
-#         :param bg: background [needed to determinate position on the screen
-#         """
-#         self.x = p.x
-#         self.y = p.y
-#         self.vel = bg.VEL_GROUND
-#         self.img = HEALTH_IMG
-#
-#     def move(self):
-#         self.x -= self.vel
-#
-#     def draw(self, win):
-#         win.blit(self.img, (self.x, self.y))
-#
-#     def collide(self, penguin):
-#         """
-#         Checks if projectile collides with penguin
-#         :param penguin:
-#         :return: True if collided
-#         """
-#         penguin_mask = penguin.get_mask()
-#         loot_mask = pygame.mask.from_surface(self.img)
-#
-#         offset = (self.x - penguin.get_x(), self.y - penguin.get_y())
-#         return penguin_mask.overlap(loot_mask, offset)
-#
-
 pygame.init()
 screen = pygame.display.set_mode((1024, 773))
 done = False
@@ -104,7 +68,6 @@ while not done and player.is_alive():
                 list_to_draw[i].lives -= 1
                 if not list_to_draw[i].is_alive():
                     if p.chance_to_drop():
-                        print('upuscilem cos')
                         loot_list.append(Loot(p, bg, HEALTH_IMG))
                     rem_p.append(list_to_draw[i])
                 rem_b.append(bullet)
