@@ -31,6 +31,8 @@ class Penguin:
         self.enemy = enemy
         self.is_moving = False
         self.bg_width = bg_width
+        if not enemy:
+            self.ammo = 10
 
     def get_vel(self):
         return self.vel_forward
@@ -50,12 +52,14 @@ class Penguin:
     def is_alive(self):
         return self.lives > 0
 
+    def has_ammo(self):
+        return self.ammo > 0
+
     def fire(self, bullet_list, projectile):
         if self.enemy and self.x < self.bg_width and random.randint(1, 100) < -5:
             bullet_list.append(projectile)
 
     def chance_to_drop(self):
-        print("szansa na upuszczenie")
         return random.randint(1, 100) < 150
 
     def move(self, key):

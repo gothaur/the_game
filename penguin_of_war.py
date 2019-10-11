@@ -4,7 +4,7 @@ import random
 from background import Background
 from projectile import Projectile
 from penguin import Penguin
-from loot import Health
+from loot import Health, Ammo, Trap
 
 
 def get_image(path):
@@ -23,6 +23,8 @@ BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
 
 PROJECTILE_IMG = get_image("img/projectile.png")
 HEALTH_IMG = get_image("img/health.png")
+GUN_IMG = get_image("img/gun.png")
+TRAP_IMG = get_image("img/trap.png")
 
 # list of penguin images required to make movement animation
 PENGUIN_IMGS = []
@@ -49,8 +51,9 @@ while not done and player.is_alive():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and player.has_ammo():
             bullets.append(Projectile(player, PROJECTILE_IMG))
+            player.ammo -= 1
 
     add_enemy = False
     rem_p = []
@@ -69,8 +72,9 @@ while not done and player.is_alive():
                 object.lives -= 1
                 if not object.is_alive():
                     if p.chance_to_drop():
-                        loot_list.append(Health(p, bg, HEALTH_IMG))
-                        print("upuscilem rzecz")
+                        randomize_loot = [Trap(p, bg, TRAP_IMG), Health(p, bg, HEALTH_IMG), Ammo(p, bg, GUN_IMG)]
+                        ind = random.randint(0, 2)
+                        loot_list.append(randomize_loot[ind])
                     rem_p.append(object)
                 rem_b.append(bullet)
 
@@ -101,10 +105,9 @@ while not done and player.is_alive():
     for r in rem_l:
         try:
             loot_list.remove(r)
-            print('loot podniesiony')
         except ValueError:
             # if an attempt to remove occurs there is no need to take action
-            print("nastapila nieudana proba usuniecia lootu")
+            pass
 
     for i in range(len(list_to_draw)):
         list_to_draw[i].move(pressed)
