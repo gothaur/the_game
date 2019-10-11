@@ -56,15 +56,19 @@ while not done and player.is_alive():
             player.ammo -= 1
 
     add_enemy = False
+    #  list of penguins to remove
     rem_p = []
+    #  list of bullets to remove
     rem_b = []
+    #  list of dropped items to remove
     rem_l = []
 
     pressed = pygame.key.get_pressed()
     player.move(pressed)
 
     for bullet in bullets:
-        if 0 > bullet.x >= WIDTH:
+        #  if bullet goes out of the screen we want to remove it
+        if bullet.x < 0 or bullet.x >= WIDTH:
             rem_b.append(bullet)
         for object in list_to_draw:
             if bullet.collide(object):
@@ -81,6 +85,9 @@ while not done and player.is_alive():
         bullet.move()
 
     for loot in loot_list:
+        #  if loot goes out of the screen we want to remove it
+        if loot.x < 0 or loot.x >= WIDTH:
+            rem_l.append(loot)
         for penguin in list_to_draw:
             if loot.collide(penguin) and not penguin.enemy:
                 loot.buff(penguin)
