@@ -14,8 +14,8 @@ class Loot:
         :param background: background [needed to determinate position on the screen
         :param loot_img: image of dropped item
         """
-        self.x = penguin.x
-        self.y = penguin.y
+        self.x = penguin.x + int(penguin.get_width() / 2)
+        self.y = penguin.y + int(penguin.get_height() / 2)
         self.vel = background.VEL_GROUND
         self.img = loot_img
         self.name = ''

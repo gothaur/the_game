@@ -17,6 +17,7 @@ class Projectile:
         self.y = int(penguin.y + penguin.get_width() / 2)
         self.penguin = penguin
         self.img = img
+        self.name = 'Projectile'
 
     def draw(self, win):
         """
