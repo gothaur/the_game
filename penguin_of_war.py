@@ -42,9 +42,12 @@ screen = pygame.display.set_mode((1024, 773))
 done = False
 bg = Background(BG_IMGS)
 player = Penguin(100, 620, WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, 2)
-list_to_draw = [player, Penguin(1200, 620, WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True)]
+#  we need to know which penguin is last
+last_penguin = Penguin(1200, random.randint(520, 620), WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True)
+list_to_draw = [player, last_penguin]
 loot_list = []
 bullets = []
+add_enemy = False
 clock = pygame.time.Clock()
 
 while not done and player.is_alive():
@@ -55,7 +58,6 @@ while not done and player.is_alive():
             bullets.append(Projectile(player, PROJECTILE_IMG))
             player.ammo -= 1
 
-    add_enemy = False
     #  list of penguins to remove
     rem_p = []
     #  list of bullets to remove
@@ -117,15 +119,21 @@ while not done and player.is_alive():
             pass
 
     for i in range(len(list_to_draw)):
-        list_to_draw[i].move(pressed)
-        list_to_draw[i].fire(bullets, Projectile(list_to_draw[i], PROJECTILE_IMG))
+        if list_to_draw[i].name == 'Penguin':
+            list_to_draw[i].move(pressed)
+            list_to_draw[i].fire(bullets, Projectile(list_to_draw[i], PROJECTILE_IMG))
         # we want different distance between next enemies
         distance = random.randint(600, 950)
         # we have to determinate last enemy to calculate distance between them
-        max_dist = max(list_to_draw, key=lambda x: x.x)
-        last = max_dist.get_x()
-        if len(list_to_draw) < 6 and last < distance:
-            list_to_draw.append(Penguin(1100, random.randint(520, 620), WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True))
+        # max_dist = max(list_to_draw, key=lambda x: x.x)
+        # last = max_dist.get_x()
+        if (len(list_to_draw) < 6 and last_penguin.x < distance) or add_enemy:
+            last_penguin = Penguin(1100, random.randint(520, 620), WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True)
+            list_to_draw.append(last_penguin)
+            add_enemy = False
+
+    if len(list_to_draw) < 2:
+        add_enemy = True
 
     bg.draw(screen, list_to_draw, bullets, loot_list)
     bg.move()
