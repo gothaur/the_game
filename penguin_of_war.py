@@ -23,6 +23,7 @@ BG_IMGS = [get_image("img/background.png"), get_image("img/distant_trees.png"),
            get_image("img/trees_and_bushes_1.png"), get_image("img/ground.png")]
 
 PROJECTILE_IMG = get_image("img/projectile.png")
+#  health image
 HEALTH_IMG = get_image("img/health.png")
 GUN_IMG = get_image("img/gun.png")
 TRAP_IMG = get_image("img/trap.png")
@@ -32,9 +33,6 @@ PENGUIN_IMGS = []
 for i in range(0, 17):
     PENGUIN_IMGS.append(get_image(f"img/penguin/riffle/penguin{i}.png"))
 
-RUNNING_IMG = get_image("img/penguin/run.png")
-coord = [(x, y, 78, 73) for y in range(0, 147, 73) for x in range(0, 313, 78)]
-
 STAT_FONT = pygame.font.SysFont('comicsans', 25)
 
 HEIGHT = BG_IMGS[0].get_height()
@@ -43,9 +41,9 @@ WIDTH = BG_IMGS[0].get_width()
 pygame.init()
 screen = pygame.display.set_mode((1024, 773))
 done = False
-bg = Background(BG_IMGS)
-player = Penguin(100, 620, WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, 2)
-list_to_draw = [player, Penguin(1200, 620, WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True)]
+bg = Background(BG_IMGS, HEALTH_IMG, PROJECTILE_IMG)
+player = Penguin(100, 620, WIDTH, PENGUIN_IMGS, 2)
+list_to_draw = [player, Penguin(1200, random.randint(530, 630), WIDTH, PENGUIN_IMGS, enemy=True)]
 loot_list = []
 bullets = []
 clock = pygame.time.Clock()
@@ -128,7 +126,7 @@ while not done and player.is_alive():
         max_dist = max(list_to_draw, key=lambda x: x.x)
         last = max_dist.get_x()
         if len(list_to_draw) < 6 and last < distance:
-            list_to_draw.append(Penguin(1100, random.randint(520, 620), WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True))
+            list_to_draw.append(Penguin(1100, random.randint(530, 630), WIDTH, PENGUIN_IMGS, enemy=True))
 
     bg.draw(screen, list_to_draw, bullets, loot_list, player, STAT_FONT)
     bg.move()
