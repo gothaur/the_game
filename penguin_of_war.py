@@ -5,6 +5,7 @@ from background import Background
 from projectile import Projectile
 from penguin import Penguin
 from loot import Health, Ammo, Trap
+pygame.font.init()
 
 
 def get_image(path):
@@ -28,11 +29,13 @@ TRAP_IMG = get_image("img/trap.png")
 
 # list of penguin images required to make movement animation
 PENGUIN_IMGS = []
-for i in range(1, 17):
-    PENGUIN_IMGS.append(get_image(f"img/penguin/Armature_run_{i}.png"))
+for i in range(0, 17):
+    PENGUIN_IMGS.append(get_image(f"img/penguin/riffle/penguin{i}.png"))
 
 RUNNING_IMG = get_image("img/penguin/run.png")
 coord = [(x, y, 78, 73) for y in range(0, 147, 73) for x in range(0, 313, 78)]
+
+STAT_FONT = pygame.font.SysFont('comicsans', 25)
 
 HEIGHT = BG_IMGS[0].get_height()
 WIDTH = BG_IMGS[0].get_width()
@@ -70,16 +73,16 @@ while not done and player.is_alive():
         #  if bullet goes out of the screen we want to remove it
         if bullet.x < 0 or bullet.x >= WIDTH:
             rem_b.append(bullet)
-        for object in list_to_draw:
-            if bullet.collide(object):
-                p = object
-                object.lives -= 1
-                if not object.is_alive():
+        for elem in list_to_draw:
+            if bullet.collide(elem):
+                p = elem
+                elem.lives -= 1
+                if not elem.is_alive():
                     if p.chance_to_drop():
                         randomize_loot = [Trap(p, bg, TRAP_IMG), Health(p, bg, HEALTH_IMG), Ammo(p, bg, GUN_IMG)]
                         ind = random.randint(0, 2)
                         loot_list.append(randomize_loot[ind])
-                    rem_p.append(object)
+                    rem_p.append(elem)
                 rem_b.append(bullet)
 
         bullet.move()
@@ -116,9 +119,9 @@ while not done and player.is_alive():
             # if an attempt to remove occurs there is no need to take action
             pass
 
-    for i in range(len(list_to_draw)):
-        list_to_draw[i].move(pressed)
-        list_to_draw[i].fire(bullets, Projectile(list_to_draw[i], PROJECTILE_IMG))
+    for elem in list_to_draw:
+        elem.move(pressed)
+        elem.fire(bullets, Projectile(elem, PROJECTILE_IMG))
         # we want different distance between next enemies
         distance = random.randint(600, 950)
         # we have to determinate last enemy to calculate distance between them
@@ -127,7 +130,7 @@ while not done and player.is_alive():
         if len(list_to_draw) < 6 and last < distance:
             list_to_draw.append(Penguin(1100, random.randint(520, 620), WIDTH, PENGUIN_IMGS, RUNNING_IMG, coord, enemy=True))
 
-    bg.draw(screen, list_to_draw, bullets, loot_list)
+    bg.draw(screen, list_to_draw, bullets, loot_list, player, STAT_FONT)
     bg.move()
     pygame.display.flip()
     clock.tick(32)

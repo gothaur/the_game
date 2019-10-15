@@ -11,12 +11,13 @@ class Projectile:
         """
         self.direction = penguin.moving_backward
         if self.direction or penguin.enemy:
-            self.x = penguin.x - 10
+            self.x = penguin.x - int(penguin.get_width() * 0.25)
         else:
             self.x = penguin.x + penguin.get_height()
-        self.y = int(penguin.y + penguin.get_width() / 2)
+        self.y = int(penguin.y + penguin.get_width() * 0.25)
         self.penguin = penguin
         self.img = img
+        self.name = "Projectile"
 
     def draw(self, win):
         """

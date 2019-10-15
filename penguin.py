@@ -24,8 +24,8 @@ class Penguin:
         self.img = p_images[0]
         self. p_sheet = p_sheet
         self.coord = coord
-        self.WIDTH = 78
-        self.HEIGHT = 73
+        self.width = 78
+        self.height = 73
         self.lives = lives
         self.moving_backward = False
         self.enemy = enemy
@@ -33,6 +33,7 @@ class Penguin:
         self.bg_width = bg_width
         if not enemy:
             self.ammo = 10
+        self.name = "Penguin"
 
     def get_vel(self):
         return self.vel_forward
@@ -44,10 +45,10 @@ class Penguin:
         return self.x
 
     def get_height(self):
-        return self.HEIGHT
+        return self.height
 
     def get_width(self):
-        return self.WIDTH
+        return self.width
 
     def is_alive(self):
         return self.lives > 0
@@ -69,7 +70,7 @@ class Penguin:
         else:
             self.moving_backward = False
             self.is_moving = False
-            if key[pygame.K_UP] and self.y > 595 - self.HEIGHT:
+            if key[pygame.K_UP] and self.y > 595 - self.height:
                 self.y -= 5
             if key[pygame.K_DOWN] and self.y < 620:
                 self.y += 5
@@ -77,7 +78,7 @@ class Penguin:
                 self.x -= self.vel_backward
                 self.moving_backward = True
                 self.is_moving = True
-            if key[pygame.K_RIGHT] and self.x < (1024 - self.WIDTH):
+            if key[pygame.K_RIGHT] and self.x < (1024 - self.width):
                 self.is_moving = True
                 self.x += self.vel_forward
 
