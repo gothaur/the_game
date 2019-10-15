@@ -22,7 +22,7 @@ class Penguin:
         self.vel_backward = 3
         self.img_count = 0
         self.img = p_images[0]
-        self. p_sheet = p_sheet
+        self. p_images = p_images
         self.coord = coord
         self.width = 78
         self.height = 73
@@ -83,14 +83,14 @@ class Penguin:
                 self.x += self.vel_forward
 
     def draw(self, win):
-        if self.img_count > 14:
+        if self.img_count > 15:
             self.img_count = 0
 
         # we want to know if character moves backward to reverse image
         if self.moving_backward or self.enemy:
-            win.blit(pygame.transform.flip(self.p_sheet, True, False), (self.x, self.y), self.coord[-self.img_count])
+            win.blit(pygame.transform.flip(self.p_images[self.img_count], True, False), (self.x, self.y))
         else:
-            win.blit(self.p_sheet, (self.x, self.y), self.coord[self.img_count])
+            win.blit(self.p_images[self.img_count], (self.x, self.y))
 
         self.img_count += 1
 
@@ -98,4 +98,4 @@ class Penguin:
         """
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
-        return pygame.mask.from_surface(self.img)
+        return pygame.mask.from_surface(self.p_images[self.img_count])
