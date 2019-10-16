@@ -14,11 +14,14 @@ class Loot:
         :param background: background [needed to determinate position on the screen
         :param loot_img: image of dropped item
         """
-        self.x = penguin.x + int(penguin.get_width() / 2)
-        self.y = penguin.y + int(penguin.get_height() / 2)
+        self.x = penguin.x
+        self.y = penguin.y + int(penguin.get_height() * 0.75)
         self.vel = background.VEL_GROUND
         self.img = loot_img
-        self.name = ''
+        self.name = "Loot"
+
+    def get_height(self):
+        return self.img.get_height()
 
     def move(self):
         self.x -= self.vel
@@ -46,7 +49,7 @@ class Health(Loot):
 
     def __init__(self, penguin, background, loot_img):
         super().__init__(penguin, background, loot_img)
-        self.name = 'Health'
+        # self.name = "Health"
 
     def buff(self, penguin):
         penguin.lives += 1
@@ -56,7 +59,7 @@ class Ammo(Loot):
 
     def __init__(self, penguin, background, loot_img):
         super().__init__(penguin, background, loot_img)
-        self.name = 'Ammo'
+        # self.name = "Ammo"
 
     def buff(self, penguin):
         penguin.ammo += 10
@@ -66,7 +69,7 @@ class Trap(Loot):
 
     def __init__(self, penguin, background, loot_img):
         super().__init__(penguin, background, loot_img)
-        self.name = 'Trap'
+        # self.name = "Trap"
 
     def buff(self, penguin):
         randomize = random.randint(0, 100)
