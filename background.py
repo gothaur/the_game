@@ -1,8 +1,10 @@
 class Background:
 
-    def __init__(self, bg_images, y=0):
+    def __init__(self, bg_images, health_img, bullet_img, y=0):
         self.y = y
         self.bg_images = bg_images
+        self.health_img = health_img
+        self.bullet_img = bullet_img
         self.WIDTH = bg_images[0].get_width()
         self.HEIGHT = bg_images[0].get_height()
         self.TREE_HEIGHT = bg_images[0].get_height() - bg_images[2].get_height()
@@ -67,6 +69,19 @@ class Background:
         # for loot in loot_list:
         #     loot.draw(win)
 
-        lives_text = f"""Lives: {player.lives}, Ammo: {player.ammo}"""
-        text = my_font.render(lives_text, 1, (55, 55, 55))
-        win.blit(text, (self.WIDTH - 10 - text.get_width(), 10))
+        # lives_text = f'Lives: {player.lives}'
+        # ammo_text = f'Ammo: {player.ammo}'
+        # score_text = f'Score'
+        # l_text = my_font.render(lives_text, 1, (55, 55, 55))
+        # a_text = my_font.render(ammo_text, 1, (55, 55, 55))
+        # s_text = my_font.render(score_text, 1, (55, 55, 55))
+        # win.blit(l_text, (10, 10))
+        # win.blit(s_text, (int(self.WIDTH / 2 - s_text.get_width() / 2), 10))
+        # win.blit(a_text, (self.WIDTH - 10 - a_text.get_width(), 10))
+        for i in range(0, player.lives):
+            win.blit(self.health_img, (10 * i, 10))
+
+        for i in range(0, player.ammo):
+            win.blit(self.bullet_img, (self.WIDTH - 5 * i - self.bullet_img.get_width(), 10))
+            if i >= 25:
+                break

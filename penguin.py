@@ -4,7 +4,7 @@ import pygame
 
 class Penguin:
 
-    def __init__(self, x, y, bg_width, p_images, p_sheet, coord, lives=1, enemy=False):
+    def __init__(self, x, y, bg_width, p_images, lives=1, enemy=False):
         """
 
         :param x: coordinate to spawn
@@ -22,8 +22,7 @@ class Penguin:
         self.vel_backward = 3
         self.img_count = 0
         self.img = p_images[0]
-        self. p_sheet = p_sheet
-        self.coord = coord
+        self. p_images = p_images
         self.width = 78
         self.height = 73
         self.lives = lives
@@ -71,9 +70,9 @@ class Penguin:
         else:
             self.moving_backward = False
             self.is_moving = False
-            if key[pygame.K_UP] and self.y > 595 - self.height:
+            if key[pygame.K_UP] and self.y > 610 - self.height:
                 self.y -= 5
-            if key[pygame.K_DOWN] and self.y < 620:
+            if key[pygame.K_DOWN] and self.y < 630:
                 self.y += 5
             if key[pygame.K_LEFT] and self.x > 0:
                 self.x -= self.vel_backward
@@ -84,14 +83,14 @@ class Penguin:
                 self.x += self.vel_forward
 
     def draw(self, win):
-        if self.img_count > 14:
+        if self.img_count > 15:
             self.img_count = 0
 
         # we want to know if character moves backward to reverse image
         if self.moving_backward or self.enemy:
-            win.blit(pygame.transform.flip(self.p_sheet, True, False), (self.x, self.y), self.coord[-self.img_count])
+            win.blit(pygame.transform.flip(self.p_images[self.img_count], True, False), (self.x, self.y))
         else:
-            win.blit(self.p_sheet, (self.x, self.y), self.coord[self.img_count])
+            win.blit(self.p_images[self.img_count], (self.x, self.y))
 
         self.img_count += 1
 
@@ -99,4 +98,4 @@ class Penguin:
         """
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
-        return pygame.mask.from_surface(self.img)
+        return pygame.mask.from_surface(self.p_images[self.img_count])

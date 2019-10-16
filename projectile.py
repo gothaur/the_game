@@ -6,15 +6,15 @@ class Projectile:
     def __init__(self, penguin, img):
         """
 
-        :param penguin: penguin who fired or dropped object
-        :param loot: type bool determinate if can buff player
+        :param penguin:
+        :param img:
         """
         self.direction = penguin.moving_backward
         if self.direction or penguin.enemy:
             self.x = penguin.x - int(penguin.get_width() * 0.25)
         else:
-            self.x = penguin.x + penguin.get_height()
-        self.y = int(penguin.y + penguin.get_width() * 0.25)
+            self.x = penguin.x + int(penguin.get_height() * 0.85)
+        self.y = penguin.y + int(penguin.get_width() * 0.25)
         self.penguin = penguin
         self.img = img
         self.name = 'Projectile'
