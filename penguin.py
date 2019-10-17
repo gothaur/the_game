@@ -4,25 +4,24 @@ import pygame
 
 class Penguin:
 
-    def __init__(self, x, y, bg_width, p_images, lives=1, enemy=False):
+    def __init__(self, x, y, bg_width, f_images, b_images, lives=1, enemy=False):
         """
 
-        :param x: coordinate to spawn
-        :param y: coordinate to spawn
-        :param bg_width: width of the screen
-        :param p_images: penguin images [needed to get collision mask]
-        :param p_sheet: penguin image sheet [needed to animate penguin on screen]
-        :param coord: coords each image on sheet
-        :param lives: how many lives penguin has
-        :param enemy: if penguin is enemy or player
+        :param x: (imt) coordinate to spawn
+        :param y: (int) coordinate to spawn
+        :param bg_width: (int) width of the screen
+        :param f_images: (list) faced forward penguin images [needed to get collision mask and make animations]
+        :param b_images: (list) faced backward penguin images [needed to get collision mask and make animations]
+        :param lives: (int) how many lives penguin has [enemy default has one, player two
+        :param enemy: (bool) if penguin is enemy or player
         """
         self.x = x
         self.y = y
         self.vel_forward = 5
-        self.vel_backward = 3
+        self.vel_backward = 5
         self.img_count = 0
-        self.img = p_images[0]
-        self. p_images = p_images
+        self.f_images = f_images
+        self.b_images = b_images
         self.width = 78
         self.height = 73
         self.lives = lives
@@ -87,9 +86,9 @@ class Penguin:
 
         # we want to know if character moves backward to reverse image
         if self.moving_backward or self.enemy:
-            win.blit(pygame.transform.flip(self.p_images[self.img_count], True, False), (self.x, self.y))
+            win.blit(self.b_images[self.img_count], (self.x, self.y))
         else:
-            win.blit(self.p_images[self.img_count], (self.x, self.y))
+            win.blit(self.f_images[self.img_count], (self.x, self.y))
 
         self.img_count += 1
 
@@ -97,4 +96,7 @@ class Penguin:
         """
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
-        return pygame.mask.from_surface(self.p_images[self.img_count])
+        if self.moving_backward or self.enemy:
+            return pygame.mask.from_surface(self.b_images[self.img_count])
+
+        return pygame.mask.from_surface(self.f_images[self.img_count])

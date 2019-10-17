@@ -66,18 +66,6 @@ class Background:
         for projectile in projectiles:
             projectile.draw(win)
 
-        # for loot in loot_list:
-        #     loot.draw(win)
-
-        # lives_text = f'Lives: {player.lives}'
-        # ammo_text = f'Ammo: {player.ammo}'
-        # score_text = f'Score'
-        # l_text = my_font.render(lives_text, 1, (55, 55, 55))
-        # a_text = my_font.render(ammo_text, 1, (55, 55, 55))
-        # s_text = my_font.render(score_text, 1, (55, 55, 55))
-        # win.blit(l_text, (10, 10))
-        # win.blit(s_text, (int(self.WIDTH / 2 - s_text.get_width() / 2), 10))
-        # win.blit(a_text, (self.WIDTH - 10 - a_text.get_width(), 10))
         for i in range(0, player.lives):
             win.blit(self.health_img, (10 * i, 10))
 

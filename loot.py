@@ -49,7 +49,6 @@ class Health(Loot):
 
     def __init__(self, penguin, background, loot_img):
         super().__init__(penguin, background, loot_img)
-        # self.name = "Health"
 
     def buff(self, penguin):
         penguin.lives += 1
@@ -59,7 +58,6 @@ class Ammo(Loot):
 
     def __init__(self, penguin, background, loot_img):
         super().__init__(penguin, background, loot_img)
-        # self.name = "Ammo"
 
     def buff(self, penguin):
         penguin.ammo += 10
@@ -69,7 +67,6 @@ class Trap(Loot):
 
     def __init__(self, penguin, background, loot_img):
         super().__init__(penguin, background, loot_img)
-        # self.name = "Trap"
 
     def buff(self, penguin):
         randomize = random.randint(0, 100)
