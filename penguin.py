@@ -29,6 +29,7 @@ class Penguin:
         self.enemy = enemy
         self.is_moving = False
         self.bg_width = bg_width
+        self.name = 'Penguin'
         if not enemy:
             self.ammo = 10
         self.name = "Penguin"
