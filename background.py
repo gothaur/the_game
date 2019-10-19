@@ -73,3 +73,6 @@ class Background:
             win.blit(self.bullet_img, (self.WIDTH - 5 * i - self.bullet_img.get_width(), 10))
             if i >= 25:
                 break
+
+        score_text = my_font.render(f'SCORE: {player.score}', False, (0, 0, 0))
+        win.blit(score_text, (int(self.WIDTH / 2 - score_text.get_width() / 2), 10))

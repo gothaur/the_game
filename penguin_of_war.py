@@ -46,7 +46,7 @@ B_PENGUIN_IMGS = []
 for img in F_PENGUIN_IMGS:
     B_PENGUIN_IMGS.append(pygame.transform.flip(img, True, False))
 
-STAT_FONT = pygame.font.SysFont('comicsans', 25)
+STAT_FONT = pygame.font.SysFont('comicsans', 35)
 
 HEIGHT = BG_IMGS[0].get_height()
 WIDTH = BG_IMGS[0].get_width()
@@ -91,6 +91,7 @@ while not done and player.is_alive():
                 p = elem
                 elem.lives -= 1
                 if not elem.is_alive():
+                    player.score += 1
                     if p.chance_to_drop():
                         randomize_loot = [Trap(p, bg, TRAP_IMG), Health(p, bg, HEALTH_IMG), Ammo(p, bg, GUN_IMG)]
                         ind = random.randint(0, 2)

@@ -32,6 +32,7 @@ class Penguin:
         self.name = 'Penguin'
         if not enemy:
             self.ammo = 10
+        self.score = 0
         self.name = "Penguin"
 
     def get_vel(self):
