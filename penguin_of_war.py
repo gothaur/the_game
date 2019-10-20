@@ -72,12 +72,6 @@ while not done and player.is_alive():
             player.ammo -= 1
 
     add_enemy = False
-    #  list of penguins to remove
-    rem_p = []
-    #  list of bullets to remove
-    rem_b = []
-    #  list of dropped items to remove
-    rem_l = []
 
     pressed = pygame.key.get_pressed()
     player.move(pressed)
@@ -85,7 +79,7 @@ while not done and player.is_alive():
     for bullet in bullets:
         #  if bullet goes out of the screen we want to remove it
         if bullet.x < 0 or bullet.x >= WIDTH:
-            rem_b.append(bullet)
+            bullets.remove(bullet)
         for elem in list_to_draw:
             if bullet.collide(elem):
                 p = elem
@@ -96,42 +90,21 @@ while not done and player.is_alive():
                         randomize_loot = [Trap(p, bg, TRAP_IMG), Health(p, bg, HEALTH_IMG), Ammo(p, bg, GUN_IMG)]
                         ind = random.randint(0, 2)
                         loot_list.append(randomize_loot[ind])
-                    rem_p.append(elem)
-                rem_b.append(bullet)
+                    list_to_draw.remove(elem)
+                bullets.remove(bullet)
 
         bullet.move()
 
     for loot in loot_list:
         #  if loot goes out of the screen we want to remove it
         if loot.x < 0 or loot.x >= WIDTH:
-            rem_l.append(loot)
+            loot_list.remove(loot)
         for penguin in list_to_draw:
             if loot.collide(penguin) and not penguin.enemy:
                 loot.buff(penguin)
-                rem_l.append(loot)
+                loot_list.remove(loot)
 
         loot.move()
-
-    for r in rem_p:
-        try:
-            list_to_draw.remove(r)
-        except ValueError:
-            # if an attempt to remove occurs there is no need to take action
-            pass
-
-    for r in rem_b:
-        try:
-            bullets.remove(r)
-        except ValueError:
-            # if an attempt to remove occurs there is no need to take action
-            pass
-
-    for r in rem_l:
-        try:
-            loot_list.remove(r)
-        except ValueError:
-            # if an attempt to remove occurs there is no need to take action
-            pass
 
     for elem in list_to_draw:
         elem.move(pressed)
