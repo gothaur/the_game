@@ -5,7 +5,11 @@ from background import Background
 from projectile import Projectile
 from penguin import Penguin
 from loot import Health, Ammo, Trap
+
 pygame.font.init()
+pygame.init()
+my_flags = pygame.DOUBLEBUF | pygame.HWSURFACE
+screen = pygame.display.set_mode((1024, 773), my_flags)
 
 
 def get_image(path):
@@ -15,7 +19,7 @@ def get_image(path):
     :return image with correct path:
     """
     canonicalized_path = path.replace('/', os.sep).replace('\\', os.sep)
-    return pygame.image.load(canonicalized_path)
+    return pygame.image.load(canonicalized_path).convert_alpha()
 
 
 #####################################################################################
@@ -51,9 +55,9 @@ STAT_FONT = pygame.font.SysFont('comicsans', 35)
 HEIGHT = BG_IMGS[0].get_height()
 WIDTH = BG_IMGS[0].get_width()
 
-pygame.init()
-my_flags = pygame.DOUBLEBUF
-screen = pygame.display.set_mode((1024, 773), my_flags)
+# pygame.init()
+# my_flags = pygame.DOUBLEBUF | pygame.HWSURFACE
+# screen = pygame.display.set_mode((1024, 773), my_flags)
 done = False
 bg = Background(BG_IMGS, HEALTH_IMG, PROJECTILE_IMG)
 player = Penguin(100, 620, WIDTH, F_PENGUIN_IMGS, B_PENGUIN_IMGS, 2)
@@ -91,7 +95,10 @@ while not done and player.is_alive():
                         ind = random.randint(0, 2)
                         loot_list.append(randomize_loot[ind])
                     list_to_draw.remove(elem)
-                bullets.remove(bullet)
+                try:
+                    bullets.remove(bullet)
+                except ValueError:
+                    pass
 
         bullet.move()
 
@@ -102,7 +109,10 @@ while not done and player.is_alive():
         for penguin in list_to_draw:
             if loot.collide(penguin) and not penguin.enemy:
                 loot.buff(penguin)
-                loot_list.remove(loot)
+                try:
+                    loot_list.remove(loot)
+                except ValueError:
+                    pass
 
         loot.move()
 
