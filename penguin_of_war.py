@@ -4,12 +4,15 @@ import random
 from background import Background
 from projectile import Projectile
 from penguin import Penguin
+from settings import Settings
 from loot import Health, Ammo, Trap
+import game_functions as gf
 
 pygame.font.init()
 pygame.init()
+settings = Settings()
 my_flags = pygame.DOUBLEBUF | pygame.HWSURFACE
-screen = pygame.display.set_mode((1024, 773), my_flags)
+screen = pygame.display.set_mode(settings.get_screen_size(), my_flags)
 
 
 def get_image(path):
@@ -60,29 +63,19 @@ WIDTH = BG_IMGS[0].get_width()
 # screen = pygame.display.set_mode((1024, 773), my_flags)
 done = False
 bg = Background(BG_IMGS, HEALTH_IMG, PROJECTILE_IMG)
-player = Penguin(100, 620, WIDTH, F_PENGUIN_IMGS, B_PENGUIN_IMGS, 2)
-list_to_draw = [player, Penguin(1200, random.randint(530, 630), WIDTH,
+player = Penguin(settings, 100, 620, WIDTH, F_PENGUIN_IMGS, B_PENGUIN_IMGS, 2)
+list_to_draw = [player, Penguin(settings, 1200, random.randint(530, 630), WIDTH,
                                 F_PENGUIN_IMGS, B_PENGUIN_IMGS, enemy=True)]
 loot_list = []
 bullets = []
 clock = pygame.time.Clock()
 
 while not done and player.is_alive():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and player.has_ammo():
-            bullets.append(Projectile(player, F_PROJECTILE_IMG, B_PROJECTILE_IMG))
-            player.ammo -= 1
-
-    add_enemy = False
-
-    pressed = pygame.key.get_pressed()
-    player.move(pressed)
+    gf.check_events(settings, player, bullets, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
 
     for bullet in bullets:
         #  if bullet goes out of the screen we want to remove it
-        if bullet.x < 0 or bullet.x >= WIDTH:
+        if bullet.x < 0 + bullet.width or bullet.x >= WIDTH - 2 * bullet.width:
             bullets.remove(bullet)
         for elem in list_to_draw:
             if bullet.collide(elem):
@@ -90,7 +83,7 @@ while not done and player.is_alive():
                 elem.lives -= 1
                 if not elem.is_alive():
                     player.score += 1
-                    if p.chance_to_drop():
+                    if p.chance_to_drop(settings.chance_to_drop):
                         randomize_loot = [Trap(p, bg, TRAP_IMG), Health(p, bg, HEALTH_IMG), Ammo(p, bg, GUN_IMG)]
                         ind = random.randint(0, 2)
                         loot_list.append(randomize_loot[ind])
@@ -117,18 +110,19 @@ while not done and player.is_alive():
         loot.move()
 
     for elem in list_to_draw:
-        elem.move(pressed)
-        elem.fire(bullets, Projectile(elem, F_PROJECTILE_IMG, B_PROJECTILE_IMG))
+        elem.update_player()
+        elem.update_enemy()
+        elem.fire(bullets, Projectile(settings, elem, F_PROJECTILE_IMG, B_PROJECTILE_IMG))
         # we want different distance between next enemies
         distance = random.randint(600, 950)
         # we have to determinate last enemy to calculate distance between them
         max_dist = max(list_to_draw, key=lambda x: x.x)
         last = max_dist.get_x()
         if len(list_to_draw) < 6 and last < distance:
-            list_to_draw.append(Penguin(1100, random.randint(530, 630), WIDTH,
+            list_to_draw.append(Penguin(settings, 1100, random.randint(530, 630), WIDTH,
                                         F_PENGUIN_IMGS, B_PENGUIN_IMGS, enemy=True))
 
     bg.draw(screen, list_to_draw, bullets, loot_list, player, STAT_FONT)
     bg.move()
     pygame.display.flip()
-    clock.tick(32)
+    clock.tick(settings.fps)

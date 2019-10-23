@@ -4,7 +4,7 @@ import pygame
 
 class Penguin:
 
-    def __init__(self, x, y, bg_width, f_images, b_images, lives=1, enemy=False):
+    def __init__(self, settings, x, y, bg_width, f_images, b_images, lives=1, enemy=False):
         """
 
         :param x: (imt) coordinate to spawn
@@ -17,26 +17,26 @@ class Penguin:
         """
         self.x = x
         self.y = y
-        self.vel_forward = 5
-        self.vel_backward = 5
         self.img_count = 0
         self.f_images = f_images
         self.b_images = b_images
         self.width = 78
         self.height = 73
         self.lives = lives
-        self.moving_backward = False
         self.enemy = enemy
-        self.is_moving = False
         self.bg_width = bg_width
-        self.name = 'Penguin'
+        self.settings = settings
         if not enemy:
-            self.ammo = 10
+            self.ammo = self.settings.player_start_ammo
         self.score = 0
         self.name = "Penguin"
+        self.move_right = False
+        self.move_left = False
+        self.move_up = False
+        self.move_down = False
 
     def get_vel(self):
-        return self.vel_forward
+        return self.settings.player_speed
 
     def get_y(self):
         return self.y
@@ -57,37 +57,32 @@ class Penguin:
         return self.ammo > 0
 
     def fire(self, bullet_list, projectile):
-        if self.enemy and self.x < self.bg_width and random.randint(1, 100) < -5:
+        if self.enemy and self.x < self.bg_width and random.randint(1, 100) < self.settings.chance_to_fire:
             bullet_list.append(projectile)
 
-    def chance_to_drop(self):
-        return random.randint(1, 100) < 150
+    def chance_to_drop(self, chance):
+        return random.randint(1, 100) < chance
 
-    def move(self, key):
-        if self.enemy:
-            if self.x > 0:
-                self.x -= 8
-        else:
-            self.moving_backward = False
-            self.is_moving = False
-            if key[pygame.K_UP] and self.y > 610 - self.height:
-                self.y -= 5
-            if key[pygame.K_DOWN] and self.y < 630:
-                self.y += 5
-            if key[pygame.K_LEFT] and self.x > 0:
-                self.x -= self.vel_backward
-                self.moving_backward = True
-                self.is_moving = True
-            if key[pygame.K_RIGHT] and self.x < (1024 - self.width):
-                self.is_moving = True
-                self.x += self.vel_forward
+    def update_enemy(self):
+        if self.enemy and self.x > 0:
+            self.x -= self.settings.enemy_speed
+
+    def update_player(self):
+        if self.move_right and self.x < (1024 - self.width):
+            self.x += self.settings.player_speed
+        if self.move_left and self.x > 0:
+            self.x -= self.settings.player_speed
+        if self.move_up and self.y > 610 - self.height:
+            self.y -= self.settings.player_speed
+        if self.move_down and self.y < 630:
+            self.y += self.settings.player_speed
 
     def draw(self, win):
         if self.img_count > 15:
             self.img_count = 0
 
         # we want to know if character moves backward to reverse image
-        if self.moving_backward or self.enemy:
+        if self.move_left or self.enemy:
             win.blit(self.b_images[self.img_count], (self.x, self.y))
         else:
             win.blit(self.f_images[self.img_count], (self.x, self.y))
@@ -98,7 +93,7 @@ class Penguin:
         """
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
-        if self.moving_backward or self.enemy:
+        if self.move_left or self.enemy:
             return pygame.mask.from_surface(self.b_images[self.img_count])
 
         return pygame.mask.from_surface(self.f_images[self.img_count])

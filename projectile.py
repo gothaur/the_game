@@ -3,14 +3,18 @@ import pygame
 
 class Projectile:
 
-    def __init__(self, penguin, f_img, b_img):
+    def __init__(self, settings, penguin, f_img, b_img):
         """
 
         :param penguin: penguin which fired projectile
         :param f_img: image faced forward
         :param b_img: image faced backward
         """
-        self.direction = penguin.moving_backward
+        self.direction = penguin.move_left
+        if self.direction:
+            self.width = b_img.get_width()
+        else:
+            self.width = f_img.get_width()
         if self.direction or penguin.enemy:
             self.x = penguin.x - int(penguin.get_width() * 0.35)
         else:
@@ -19,6 +23,7 @@ class Projectile:
         self.penguin = penguin
         self.f_img = f_img
         self.b_img = b_img
+        self.settings = settings
         self.name = "Projectile"
 
     def draw(self, win):
@@ -38,9 +43,9 @@ class Projectile:
         :return: None
         """
         if self.direction or self.penguin.enemy:
-            self.x -= (self.penguin.get_vel() + 15)
+            self.x -= (self.penguin.get_vel() + self.settings.bullet_speed)
         else:
-            self.x += self.penguin.get_vel() + 15
+            self.x += self.penguin.get_vel() + 15 + self.settings.bullet_speed
 
     def collide(self, penguin):
         """
