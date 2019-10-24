@@ -1,6 +1,6 @@
 class Background:
 
-    def __init__(self, bg_images, health_img, bullet_img, y=0):
+    def __init__(self, settings, bg_images, health_img, bullet_img, y=0):
         self.y = y
         self.bg_images = bg_images
         self.health_img = health_img
@@ -14,7 +14,8 @@ class Background:
         self.trees_x2 = self.WIDTH
         self.dist_trees_x1 = 0
         self.dist_trees_x2 = self.WIDTH
-        self.VEL_GROUND = 3
+        self.settings = settings
+        # self.VEL_GROUND = settings.ground_speed
         self.VEL_TREES_AND_BUSHES = 2
         self.VEL_DISTANT_TREES = 1
         self. name = "Background"
@@ -23,8 +24,8 @@ class Background:
         return self.y
 
     def move(self):
-        self.ground_x1 -= self.VEL_GROUND
-        self.ground_x2 -= self.VEL_GROUND
+        self.ground_x1 -= self.settings.ground_speed
+        self.ground_x2 -= self.settings.ground_speed
         self.trees_x1 -= self.VEL_TREES_AND_BUSHES
         self.trees_x2 -= self.VEL_TREES_AND_BUSHES
         self.dist_trees_x1 -= self.VEL_DISTANT_TREES
@@ -48,7 +49,7 @@ class Background:
         if self.dist_trees_x2 + self.WIDTH < 0:
             self.dist_trees_x2 = self.dist_trees_x1 + self.WIDTH
 
-    def draw(self, win, list_of_objects, projectiles, loot_list, player, my_font):
+    def draw(self, win, enemies, projectiles, loot_list, player, my_font):
         win.blit(self.bg_images[0], (0, 0))
         win.blit(self.bg_images[1], (self.dist_trees_x1, 0))
         win.blit(self.bg_images[1], (self.dist_trees_x2, 0))
@@ -58,7 +59,8 @@ class Background:
         win.blit(self.bg_images[3], (self.ground_x2, 90))
 
         # list of penguins must be in correct order to draw
-        tmp = list_of_objects + loot_list
+        tmp = enemies + loot_list
+        tmp.append(player)
         tmp.sort(key=lambda x: x.y + x.get_height())
         for obj in tmp:
             obj.draw(win)

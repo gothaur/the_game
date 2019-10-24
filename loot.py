@@ -7,16 +7,17 @@ class Loot:
     Loot object witch can buff our penguin
     """
 
-    def __init__(self, penguin, background, loot_img):
+    def __init__(self, settings, penguin, background, loot_img):
         """
 
         :param penguin: penguin witch dropped item
         :param background: background [needed to determinate position on the screen
         :param loot_img: image of dropped item
         """
+        self.settings = settings
         self.x = penguin.x
         self.y = penguin.y + int(penguin.get_height() * 0.75)
-        self.vel = background.VEL_GROUND
+        self.vel = self.settings.ground_speed
         self.img = loot_img
         self.name = "Loot"
 
@@ -47,8 +48,8 @@ class Loot:
 
 class Health(Loot):
 
-    def __init__(self, penguin, background, loot_img):
-        super().__init__(penguin, background, loot_img)
+    def __init__(self, settings, penguin, background, loot_img):
+        super().__init__(settings, penguin, background, loot_img)
 
     def buff(self, penguin):
         penguin.lives += 1
@@ -56,8 +57,8 @@ class Health(Loot):
 
 class Ammo(Loot):
 
-    def __init__(self, penguin, background, loot_img):
-        super().__init__(penguin, background, loot_img)
+    def __init__(self, settings, penguin, background, loot_img):
+        super().__init__(settings, penguin, background, loot_img)
 
     def buff(self, penguin):
         penguin.ammo += 10
@@ -65,8 +66,8 @@ class Ammo(Loot):
 
 class Trap(Loot):
 
-    def __init__(self, penguin, background, loot_img):
-        super().__init__(penguin, background, loot_img)
+    def __init__(self, settings, penguin, background, loot_img):
+        super().__init__(settings, penguin, background, loot_img)
 
     def buff(self, penguin):
         randomize = random.randint(0, 100)
