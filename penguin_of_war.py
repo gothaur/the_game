@@ -39,6 +39,7 @@ B_PROJECTILE_IMG = pygame.transform.rotate(PROJECTILE_IMG, -90)
 HEALTH_IMG = get_image("img/health.png")
 GUN_IMG = get_image("img/gun.png")
 TRAP_IMG = get_image("img/trap.png")
+LOOT_IMGS = [get_image("img/trap.png"), get_image("img/health.png"), get_image("img/gun.png")]
 #####################################################################################
 # list of penguin images required to make forward movement animation
 F_PENGUIN_IMGS = []
@@ -66,13 +67,15 @@ loot_list = []
 bullets = Group()
 clock = pygame.time.Clock()
 
-while not done and player.is_alive():
+while not done:
     gf.check_events(settings, player, bullets, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
-    gf.update_bullets(settings, bullets, enemies, player, loot_list, TRAP_IMG, HEALTH_IMG, GUN_IMG)
     player.update()
+    # gf.update_bullets(settings, bullets, enemies, player, loot_list, TRAP_IMG, HEALTH_IMG, GUN_IMG)
+    gf.update_bullets(settings, bullets, enemies, player, F_PROJECTILE_IMG, B_PROJECTILE_IMG, loot_list, LOOT_IMGS)
+    # gf.update_enemies(settings, enemies, bullets, B_PENGUIN_IMGS, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
+    gf.update_enemies(settings, enemies, B_PENGUIN_IMGS)
     gf.update_loot(settings, loot_list, player)
-    gf.update_enemies(settings, enemies, bullets, B_PENGUIN_IMGS, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
     bg.draw(screen, enemies, bullets, loot_list, player, STAT_FONT)
     bg.move()
     pygame.display.flip()
-    clock.tick(settings.fps)
+    clock.tick(settings.fps_multipler * 30)

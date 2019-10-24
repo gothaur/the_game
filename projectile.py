@@ -20,7 +20,6 @@ class Projectile(Sprite):
             self.width = f_img.get_width()
         if self.direction or type(penguin) == Enemy:
             self.x = penguin.x - int(penguin.get_width() * 0.35)
-            # self.x = penguin.x  # - int(penguin.get_width() * 0.15)
         else:
             self.x = penguin.x + int(penguin.get_height())
         self.y = penguin.y + int(penguin.get_width() * 0.25)
@@ -41,7 +40,7 @@ class Projectile(Sprite):
             image = self.f_img
         win.blit(image, (self.x, self.y))
 
-    def update(self):
+    def move(self):
         """
         Moves projectile on the screen
         :return: None

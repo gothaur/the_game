@@ -17,6 +17,8 @@ def check_keydown_events(event, settings, player, bullets, f_img, b_img):
         player.move_down = True
     elif event.key == pygame.K_SPACE:
         fire_bullet(settings, player, bullets, f_img, b_img)
+    elif event.key == pygame.K_F4 and pygame.KMOD_ALT:
+        sys.exit()
 
 
 def check_keyup_events(event, player):
@@ -48,12 +50,7 @@ def fire_bullet(settings, player, bullets, f_img, b_img):
         player.ammo -= 1
 
 
-def update_screen(settings, background, screen, player, enemies, bullets, loots):
-    pass
-
-
-def update_bullets(settings, bullets, enemies, player, loot_list, TRAP_IMG, HEALTH_IMG, GUN_IMG):
-    bullets.update()
+def update_bullets(settings, bullets, enemies, player, bullet_image, reversed_bullet_image, loot_list, loot_images):
 
     for bullet in bullets.copy():
         if bullet.x < 0 + bullet.width or bullet.x >= settings.screen_width - 2 * bullet.width:
@@ -66,27 +63,36 @@ def update_bullets(settings, bullets, enemies, player, loot_list, TRAP_IMG, HEAL
         for enemy in enemies.copy():
             if bullet.collide(enemy):
                 enemy.lives -= 1
-                if not enemy.is_alive():
-                    player.score += 1
-                    if enemy.chance_to_drop(settings.chance_to_drop):
-                        randomize_loot = [Trap(settings, enemy, settings.ground_speed, TRAP_IMG),
-                                          Health(settings, enemy, settings.ground_speed, HEALTH_IMG),
-                                          Ammo(settings, enemy, settings.ground_speed, GUN_IMG)]
-                        ind = random.randint(0, 2)
-                        loot_list.append(randomize_loot[ind])
-                    bullets.remove(bullet)
-                    enemies.remove(enemy)
+                bullets.remove(bullet)
+                try_to_drop_loop(settings, enemy, loot_list, loot_images)
+            if len(bullets) < 11:
+                enemy.fire(bullets, Projectile(settings, enemy, bullet_image, reversed_bullet_image))
+
+        bullet.move()
 
 
-def update_enemies(settings, enemies, bullets, reversed_penguin_images, bullet_image, reversed_bullet_image):
+def try_to_drop_loop(settings, enemy, loot_list, loot_images):
+    if enemy.chance_to_drop:
+        roll = random.randint(0, 100)
+        if roll <= settings.chance_to_drop_present:
+            loot_list.append(Trap(settings, enemy, loot_images[0]))
+        elif roll <= settings.chance_to_drop_health:
+            loot_list.append(Health(settings, enemy, loot_images[1]))
+        else:
+            loot_list.append(Ammo(settings, enemy, loot_images[2]))
+
+
+def update_enemies(settings, enemies, reversed_penguin_images):
     if len(enemies) < 1:
         enemies.append(Enemy(settings, 1200, random.randint(530, 630), reversed_penguin_images))
 
-    for enemy in enemies:
+    for enemy in enemies.copy():
+        if enemy.is_dead():
+            enemies.remove(enemy)
+            continue
         enemy.update()
-        enemy.fire(bullets, Projectile(settings, enemy, bullet_image, reversed_bullet_image))
         # we want different distance between next enemies
-        distance = random.randint(600, 950)
+        distance = random.randint(850, 950)
         # we have to determinate last enemy to calculate distance between them
         max_dist = max(enemies, key=lambda x: x.x)
         last = max_dist.get_x()

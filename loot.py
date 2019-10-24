@@ -7,7 +7,7 @@ class Loot:
     Loot object witch can buff our penguin
     """
 
-    def __init__(self, settings, penguin, background, loot_img):
+    def __init__(self, settings, penguin, loot_img):
         """
 
         :param penguin: penguin witch dropped item
@@ -42,14 +42,14 @@ class Loot:
         offset = (self.x - penguin.get_x(), self.y - penguin.get_y())
         return penguin_mask.overlap(loot_mask, offset)
 
-    def buff(self):
+    def buff(self, penguin):
         pass
 
 
 class Health(Loot):
 
-    def __init__(self, settings, penguin, background, loot_img):
-        super().__init__(settings, penguin, background, loot_img)
+    def __init__(self, settings, penguin, loot_img):
+        super().__init__(settings, penguin, loot_img)
 
     def buff(self, penguin):
         penguin.lives += 1
@@ -57,8 +57,8 @@ class Health(Loot):
 
 class Ammo(Loot):
 
-    def __init__(self, settings, penguin, background, loot_img):
-        super().__init__(settings, penguin, background, loot_img)
+    def __init__(self, settings, penguin, loot_img):
+        super().__init__(settings, penguin, loot_img)
 
     def buff(self, penguin):
         penguin.ammo += 10
@@ -66,8 +66,8 @@ class Ammo(Loot):
 
 class Trap(Loot):
 
-    def __init__(self, settings, penguin, background, loot_img):
-        super().__init__(settings, penguin, background, loot_img)
+    def __init__(self, settings, penguin, loot_img):
+        super().__init__(settings, penguin, loot_img)
 
     def buff(self, penguin):
         randomize = random.randint(0, 100)

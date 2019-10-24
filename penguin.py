@@ -1,6 +1,6 @@
 import random
 import pygame
-from pygame.sprite import Sprite
+import time
 
 
 class Penguin:
@@ -41,17 +41,16 @@ class Penguin:
     def get_width(self):
         return self.width
 
-    def is_alive(self):
-        return self.lives > 0
+    def is_dead(self):
+        return self.lives <= 0
 
     def draw(self, win):
-        if self.img_count > 15:
+        self.img_count += 1
+        if self.img_count > 16 * self.settings.fps_multipler:
             self.img_count = 0
 
         # we want to know if character moves backward to reverse image
-        win.blit(self.images[self.img_count], (self.x, self.y))
-
-        self.img_count += 1
+        win.blit(self.images[int(self.img_count / self.settings.fps_multipler)], (self.x, self.y))
 
 
 class Player(Penguin):
@@ -77,25 +76,24 @@ class Player(Penguin):
         return self.ammo > 0
 
     def draw(self, win):
-        if self.img_count > 15:
+        self.img_count += 1
+        if self.img_count > 16 * self.settings.fps_multipler:
             self.img_count = 0
 
         # we want to know if character moves backward to reverse image
         if self.move_left:
-            win.blit(self.reversed_images[self.img_count], (self.x, self.y))
+            win.blit(self.reversed_images[int(self.img_count / self.settings.fps_multipler)], (self.x, self.y))
         else:
-            win.blit(self.images[self.img_count], (self.x, self.y))
-
-        self.img_count += 1
+            win.blit(self.images[int(self.img_count / self.settings.fps_multipler)], (self.x, self.y))
 
     def get_mask(self):
         """
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
         if self.move_left:
-            return pygame.mask.from_surface(self.reversed_images[self.img_count])
+            return pygame.mask.from_surface(self.reversed_images[int(self.img_count / self.settings.fps_multipler)])
 
-        return pygame.mask.from_surface(self.images[self.img_count])
+        return pygame.mask.from_surface(self.images[int(self.img_count / self.settings.fps_multipler)])
 
 
 class Enemy(Penguin):
@@ -104,20 +102,22 @@ class Enemy(Penguin):
         self.reversed_images = reversed_images
         self.lives = 1
         self.move_left = True
+        self.chance_to_drop = random.randint(1, 100) < settings.chance_to_drop
+        self.last_shot = time.time()
 
     def update(self):
         if self.x > 0:
             self.x -= self.settings.enemy_speed
 
     def fire(self, bullet_list, projectile):
-        if self.x < self.bg_width and random.randint(1, 100) < self.settings.chance_to_fire:
+        current_time = time.time()
+        time_to_fire = current_time - self.last_shot > self.settings.shoots_delay
+        if time_to_fire and self.x < self.bg_width and random.randint(1, 100) < self.settings.chance_to_fire:
+            self.last_shot = time.time()
             bullet_list.add(projectile)
-
-    def chance_to_drop(self, chance):
-        return random.randint(1, 100) < chance
 
     def get_mask(self):
         """
         :return: tuple of coordinates of object edges needed to determinate if hit
         """
-        return pygame.mask.from_surface(self.reversed_images[self.img_count])
+        return pygame.mask.from_surface(self.reversed_images[int(self.img_count / self.settings.fps_multipler)])
