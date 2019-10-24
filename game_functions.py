@@ -59,6 +59,10 @@ def update_bullets(settings, bullets, enemies, player, loot_list, TRAP_IMG, HEAL
         if bullet.x < 0 + bullet.width or bullet.x >= settings.screen_width - 2 * bullet.width:
             bullets.remove(bullet)
 
+        if bullet.collide(player):
+            player.lives -= 1
+            bullets.remove(bullet)
+
         for enemy in enemies.copy():
             if bullet.collide(enemy):
                 enemy.lives -= 1
