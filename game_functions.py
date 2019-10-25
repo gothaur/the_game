@@ -4,6 +4,7 @@ from projectile import Projectile
 from penguin import Enemy
 from loot import Health, Ammo, Trap
 import random
+import neat
 
 
 def check_keydown_events(event, settings, player, bullets, f_img, b_img):
