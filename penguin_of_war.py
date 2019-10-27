@@ -63,19 +63,26 @@ bg = Background(settings, BG_IMGS, HEALTH_IMG, PROJECTILE_IMG)
 player = Player(settings, 100, 620, F_PENGUIN_IMGS, B_PENGUIN_IMGS)
 enemies = [Enemy(settings, 1200, random.randint(530, 630), B_PENGUIN_IMGS)]
 
+
+# def eval_genomes(genomes, config):
 loot_list = []
-bullets = Group()
+# bullets = Group()
+enemy_bullets = Group()
+player_bullets = Group()
 clock = pygame.time.Clock()
 
 while not done:
-    gf.check_events(settings, player, bullets, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
+    gf.check_events(settings, player, player_bullets, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
     player.update()
     # gf.update_bullets(settings, bullets, enemies, player, loot_list, TRAP_IMG, HEALTH_IMG, GUN_IMG)
-    gf.update_bullets(settings, bullets, enemies, player, F_PROJECTILE_IMG, B_PROJECTILE_IMG, loot_list, LOOT_IMGS)
+    # gf.update_bullets(settings, bullets, enemies, player, F_PROJECTILE_IMG, B_PROJECTILE_IMG, loot_list, LOOT_IMGS)
     # gf.update_enemies(settings, enemies, bullets, B_PENGUIN_IMGS, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
+    gf.update_enemy_bullets(enemy_bullets, player)
+    gf.update_player_bullets(settings, player_bullets, enemies, loot_list, LOOT_IMGS)
     gf.update_enemies(settings, enemies, B_PENGUIN_IMGS)
+    gf.take_shot(settings, enemy_bullets, enemies, player, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
     gf.update_loot(settings, loot_list, player)
-    bg.draw(screen, enemies, bullets, loot_list, player, STAT_FONT)
+    bg.draw(screen, enemies, player_bullets, enemy_bullets, loot_list, player, STAT_FONT)
     bg.move()
     pygame.display.flip()
     clock.tick(settings.fps_multipler * 30)

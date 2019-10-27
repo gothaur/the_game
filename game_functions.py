@@ -4,7 +4,6 @@ from projectile import Projectile
 from penguin import Enemy
 from loot import Health, Ammo, Trap
 import random
-import neat
 
 
 def check_keydown_events(event, settings, player, bullets, f_img, b_img):
@@ -45,29 +44,43 @@ def check_events(settings, player, bullets, f_img, b_img):
             check_keyup_events(event, player)
 
 
-def fire_bullet(settings, player, bullets, f_img, b_img):
-    if player.has_ammo():
-        bullets.add(Projectile(settings, player, f_img, b_img))
+def fire_bullet(settings, player, player_bullets, f_img, b_img):
+    if player.has_ammo() and len(player_bullets) < settings.max_player_bullets:
+        player_bullets.add(Projectile(settings, player, f_img, b_img))
         player.ammo -= 1
 
 
-def update_bullets(settings, bullets, enemies, player, bullet_image, reversed_bullet_image, loot_list, loot_images):
+def take_shot(settings, enemy_bullets, enemies, player, bullet_image, reversed_bullet_image):
+    for enemy in enemies:
+        if len(enemy_bullets) < settings.max_enemy_bullets \
+                and player.get_y() + player.get_height() >= enemy.get_y() >= player.get_y() \
+                and player.get_x() < enemy.get_x():
+            enemy.fire(enemy_bullets, Projectile(settings, enemy, bullet_image, reversed_bullet_image))
 
-    for bullet in bullets.copy():
-        if bullet.x < 0 + bullet.width or bullet.x >= settings.screen_width - 2 * bullet.width:
-            bullets.remove(bullet)
+
+def update_enemy_bullets(enemy_bullets, player):
+    for bullet in enemy_bullets.copy():
+        if bullet.x < 0 + bullet.width:
+            enemy_bullets.remove(bullet)
 
         if bullet.collide(player):
             player.lives -= 1
-            bullets.remove(bullet)
+            enemy_bullets.remove(bullet)
+
+        bullet.move()
+
+
+def update_player_bullets(settings, player_bullets, enemies, loot_list, loot_images):
+
+    for bullet in player_bullets.copy():
+        if bullet.x < 0 + bullet.width or bullet.x >= settings.screen_width - 2 * bullet.width:
+            player_bullets.remove(bullet)
 
         for enemy in enemies.copy():
             if bullet.collide(enemy):
                 enemy.lives -= 1
-                bullets.remove(bullet)
+                player_bullets.remove(bullet)
                 try_to_drop_loop(settings, enemy, loot_list, loot_images)
-            if len(bullets) < 11:
-                enemy.fire(bullets, Projectile(settings, enemy, bullet_image, reversed_bullet_image))
 
         bullet.move()
 
@@ -77,7 +90,7 @@ def try_to_drop_loop(settings, enemy, loot_list, loot_images):
         roll = random.randint(0, 100)
         if roll <= settings.chance_to_drop_present:
             loot_list.append(Trap(settings, enemy, loot_images[0]))
-        elif roll <= settings.chance_to_drop_health:
+        elif roll <= settings.chance_to_drop_health + settings.chance_to_drop_present:
             loot_list.append(Health(settings, enemy, loot_images[1]))
         else:
             loot_list.append(Ammo(settings, enemy, loot_images[2]))
