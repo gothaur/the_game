@@ -48,14 +48,14 @@ class Background:
         if self.dist_trees_x2 + self.WIDTH < 0:
             self.dist_trees_x2 = self.dist_trees_x1 + self.WIDTH
 
-    def draw(self, win, enemies, player_projectiles, enemy_projectiles, loot_list, player, my_font):
+    def draw(self,settings, win, enemies, player_projectiles, enemy_projectiles, loot_list, player, my_font):
         win.blit(self.bg_images[0], (0, 0))
         win.blit(self.bg_images[1], (self.dist_trees_x1, 0))
         win.blit(self.bg_images[1], (self.dist_trees_x2, 0))
         win.blit(self.bg_images[2], (self.trees_x1, self.TREE_HEIGHT))
         win.blit(self.bg_images[2], (self.trees_x2, self.TREE_HEIGHT))
-        win.blit(self.bg_images[3], (self.ground_x1, 90))
-        win.blit(self.bg_images[3], (self.ground_x2, 90))
+        win.blit(self.bg_images[3], (self.ground_x1, self.settings.ground_bottom))
+        win.blit(self.bg_images[3], (self.ground_x2, self.settings.ground_bottom))
 
         # list of penguins must be in correct order to draw
         tmp = enemies + loot_list
@@ -78,5 +78,5 @@ class Background:
             if i >= 25:
                 break
 
-        score_text = my_font.render(f'SCORE: {player.score}', False, (0, 0, 0))
+        score_text = my_font.render(f'SCORE: {settings.score}', False, (0, 0, 0))
         win.blit(score_text, (int(self.WIDTH / 2 - score_text.get_width() / 2), 10))

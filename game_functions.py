@@ -45,6 +45,15 @@ def check_events(settings, player, bullets, f_img, b_img):
 
 
 def fire_bullet(settings, player, player_bullets, f_img, b_img):
+    """
+    Player's bullet method
+    :param settings: params of bullet speed and number of bullets
+    :param player: player object who fired
+    :param player_bullets: list of bullets on screen
+    :param f_img: image of bullets
+    :param b_img: image of reversed bullet
+    :return:
+    """
     if player.has_ammo() and len(player_bullets) < settings.max_player_bullets:
         player_bullets.add(Projectile(settings, player, f_img, b_img))
         player.ammo -= 1
@@ -74,31 +83,41 @@ def update_enemy_bullets(enemy_bullets, player):
 def update_player_bullets(settings, player_bullets, enemies, loot_list, loot_images):
 
     for bullet in player_bullets.copy():
+        # if bullets are out of screen then remove it
         if bullet.x < 0 + bullet.width or bullet.x >= settings.screen_width - 2 * bullet.width:
             player_bullets.remove(bullet)
 
         for enemy in enemies.copy():
 
-            in_range(settings, bullet, enemy)
+            # in_range(settings, bullet, enemy)
+            ai_bot(settings, bullet, enemy)
 
             if bullet.collide(enemy):
                 enemy.lives -= 1
+                settings.score += 1
                 player_bullets.remove(bullet)
                 try_to_drop_loop(settings, enemy, loot_list, loot_images)
 
         bullet.move()
 
 
-def in_range(settings, bullet, enemy):
+def ai_bot(settings, bullet, enemy):
+    half_enemy_height = enemy.height / 2
+    enemy_h = enemy.get_y() + half_enemy_height
+    bullet_h = bullet.y + bullet.height / 2
 
-    bullet_y = bullet.y + bullet.width / 2
-    enemy_y = enemy.y + enemy.get_height() / 2
-
-    if enemy.get_x() > bullet.x and enemy.get_y() - bullet.y <= settings.enemy_field_of_view:
-        if enemy.y <= bullet_y <= enemy_y:
-            enemy.y += 10
-        elif enemy_y < bullet.y <= enemy.y + enemy.get_height():
-            enemy.y -= 10
+    if 0 < enemy.x - bullet.x <= settings.enemy_field_of_view and \
+            abs(enemy_h - bullet_h) <= half_enemy_height:
+        if bullet_h <= enemy_h:
+            if enemy.battlefield_bottom - enemy.y > enemy.height:
+                enemy.y += 5
+            else:
+                enemy.y -= 5
+        else:
+            if enemy.y < enemy.battlefield_top:
+                enemy.y += 5
+            else:
+                enemy.y -= 5
 
 
 def try_to_drop_loop(settings, enemy, loot_list, loot_images):
@@ -116,7 +135,7 @@ def update_enemies(settings, enemies, reversed_penguin_images):
     if len(enemies) < 1:
         enemies.append(Enemy(settings, 1200, random.randint(530, 630), reversed_penguin_images))
 
-    for x, enemy in enumerate(enemies.copy()):
+    for enemy in enemies.copy():
         if enemy.is_dead():
             enemies.remove(enemy)
             continue

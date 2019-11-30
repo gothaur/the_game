@@ -6,7 +6,6 @@ from penguin import Player, Enemy
 from settings import Settings
 import game_functions as gf
 from pygame.sprite import Group
-import neat
 
 pygame.font.init()
 pygame.init()
@@ -78,92 +77,7 @@ while not done:
     gf.update_enemies(settings, enemies, B_PENGUIN_IMGS)
     gf.take_shot(settings, enemy_bullets, enemies, player, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
     gf.update_loot(settings, loot_list, player)
-    bg.draw(screen, enemies, player_bullets, enemy_bullets, loot_list, player, STAT_FONT)
+    bg.draw(settings, screen, enemies, player_bullets, enemy_bullets, loot_list, player, STAT_FONT)
     bg.move()
     pygame.display.flip()
     clock.tick(settings.fps_multipler * 30)
-
-
-# def eval_genomes(genomes, config):
-#
-#     global window
-#     screen = window
-#
-#     nets = []
-#     ge = []
-#
-#     for genome_id, genome in genomes:
-#         genome.fitness = 0
-#         net = neat.nn.FeedForwardNetwork.create(genome, config)
-#         nets.append(net)
-#         enemies.append(Enemy(settings, 1200, random.randint(530, 630), B_PENGUIN_IMGS))
-#         ge.append(genome)
-#
-#     while not done:
-#         gf.check_events(settings, player, player_bullets, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
-#         player.update()
-#         gf.update_enemy_bullets(enemy_bullets, player)
-#         gf.update_player_bullets(settings, player_bullets, enemies, loot_list, LOOT_IMGS)
-#         gf.update_enemies(settings, enemies, player, player_bullets, nets, ge)
-#         gf.take_shot(settings, enemy_bullets, enemies, player, F_PROJECTILE_IMG, B_PROJECTILE_IMG)
-#         gf.update_loot(settings, loot_list, player)
-#         bg.draw(screen, enemies, player_bullets, enemy_bullets, loot_list, player, STAT_FONT)
-#         bg.move()
-#         pygame.display.flip()
-#         clock.tick(settings.fps_multipler * 30)
-
-
-# def run(config_file):
-#     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,neat.DefaultSpeciesSet,
-#                                 neat.DefaultStagnation, config_file)
-#
-#     p = neat.Population(config)
-#
-#     p.add_reporter(neat.StdOutReporter(True))
-#     stats = neat.StatisticsReporter
-#     p.add_reporter(stats)
-#
-#     winner = p.run(eval_genomes, 50)
-#
-#     print('\nBest genome: \n{!s}'.format(winner))
-#
-#
-# if __name__ == '__main__':
-#     local_dir = os.path.dirname(__file__)
-#     config_path = os.path.join(local_dir, 'config-feedforward.txt')
-#     run(config_path)
-#
-# def run(config_file):
-#     """
-#     runs the NEAT algorithm to train a neural network to play flappy bird.
-#     :param config_file: location of config file
-#     :return: None
-#     """
-#     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
-#                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
-#                          config_file)
-#
-#     # Create the population, which is the top-level object for a NEAT run.
-#     p = neat.Population(config)
-#
-#     # Add a stdout reporter to show progress in the terminal.
-#     p.add_reporter(neat.StdOutReporter(True))
-#     stats = neat.StatisticsReporter()
-#     p.add_reporter(stats)
-#     #p.add_reporter(neat.Checkpointer(5))
-#
-#     # Run for up to 50 generations.
-#     winner = p.run(eval_genomes, 50)
-#
-#     # show final stats
-#     print('\nBest genome:\n{!s}'.format(winner))
-#
-#
-# if __name__ == '__main__':
-#     # Determine path to configuration file. This path manipulation is
-#     # here so that the script will run successfully regardless of the
-#     # current working directory.
-#     local_dir = os.path.dirname(__file__)
-#     config_path = os.path.join(local_dir, 'config-feedforward.txt')
-#     run(config_path)
-

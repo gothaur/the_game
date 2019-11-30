@@ -18,13 +18,15 @@ class Penguin:
         self.img_count = 0
         self.images = images
         self.lives = 1
-        self.width = 78
-        self.height = 73
+        self.width = self.images[0].get_width()
+        self.height = self.images[0].get_height()
         self.bg_width = settings.screen_width
         self.move_right = False
         self.move_left = False
         self.move_up = False
         self.move_down = False
+        self.battlefield_bottom = self.settings.ground_bottom - self.height
+        self.battlefield_top = self.battlefield_bottom - settings.battlefield_height
 
     def get_vel(self):
         return self.settings.player_speed
@@ -67,9 +69,9 @@ class Player(Penguin):
             self.x += self.settings.player_speed
         if self.move_left and self.x > 0:
             self.x -= self.settings.player_speed
-        if self.move_up and self.y > 610 - self.height:
+        if self.move_up and self.y > self.battlefield_top:
             self.y -= self.settings.player_speed
-        if self.move_down and self.y < 630:
+        if self.move_down and self.y < self.battlefield_bottom:
             self.y += self.settings.player_speed
 
     def has_ammo(self):
@@ -104,6 +106,7 @@ class Enemy(Penguin):
         self.move_left = True
         self.chance_to_drop = random.randint(1, 100) < settings.chance_to_drop
         self.last_shot = time.time()
+        self.time_to_fire = 0
 
     def update(self):
         if self.x > 0:
@@ -111,8 +114,8 @@ class Enemy(Penguin):
 
     def fire(self, bullet_list, projectile):
         current_time = time.time()
-        time_to_fire = current_time - self.last_shot > self.settings.shoots_delay
-        if time_to_fire and self.x < self.bg_width and random.randint(1, 100) < self.settings.chance_to_fire:
+        self.time_to_fire = current_time - self.last_shot > self.settings.shoots_delay
+        if self.time_to_fire and self.x < self.bg_width and random.randint(1, 100) < self.settings.chance_to_fire:
             self.last_shot = time.time()
             bullet_list.add(projectile)
 

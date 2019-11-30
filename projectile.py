@@ -16,8 +16,10 @@ class Projectile(Sprite):
         self.direction = penguin.move_left
         if self.direction:
             self.width = b_img.get_width()
+            self.height = b_img.get_height()
         else:
             self.width = f_img.get_width()
+            self.height = f_img.get_height()
         if self.direction or type(penguin) == Enemy:
             self.x = penguin.x - int(penguin.get_width() * 0.35)
         else:
