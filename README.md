@@ -20,15 +20,15 @@ Clone this repo to your computer
 ```
 git clone https://github.com/gothaur/the_game.git
 ```
-or simply download it to your computer
+or simply download it
 
 ### Installing
 
-Create new wirtual enviroment:
+Create new virtual enviroment:
 ```
 virtualenv -p python <your_virtualenv_name>
 ```
-Activate wirtual enviroment:
+Activate virtual enviroment:
 ```
 source <your_directory_with_wirtual_env>/bin/activate
 ```
