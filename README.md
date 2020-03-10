@@ -14,18 +14,19 @@ And there is a suprise. It can be ammo, health potion or a deadly mine. You'll n
 
 
 ==========================================================================================
-# Instalation notice:
+### Installing
 
-To run my code you need pygame. Best way to do this is create new virtual environment and install package from requirements.txt:
-to create new wirtual enviroment type:
+to run this game you have to create new virtual enviroment and install packages from requirements.txt:
+
+Create new wirtual enviroment:
 ```
 virtualenv -p python <your_virtualenv_name>
 ```
-to activate wirtual enviroment type:
+Activate wirtual enviroment:
 ```
 source <your_directory_with_wirtual_env>/bin/activate
 ```
-to install packages from requirements.txt type:
+Install packages from requirements.txt:
 ```
 pip install -r requirements.txt
 ```
