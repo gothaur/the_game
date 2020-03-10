@@ -1,6 +1,7 @@
 # the_game
 result of my learning python with pygame library
 
+![Penguin at war](/img/screenshots/screenshot_1.png)
 
 To run my code you need pygame. Best way to do this is create new virtual environment and install package from requirements.txt:
 to create new wirtual enviroment type:
