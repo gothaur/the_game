@@ -7,7 +7,6 @@ class Projectile(Sprite):
 
     def __init__(self, settings, penguin, f_img, b_img):
         """
-
         :param penguin: penguin which fired projectile
         :param f_img: image faced forward
         :param b_img: image faced backward
