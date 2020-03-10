@@ -14,9 +14,17 @@ And there is a suprise. It can be ammo, health potion or a deadly mine. You'll n
 
 
 ==========================================================================================
-## Installing
+## Getting Started
 
-to run this game you have to create new virtual enviroment and install packages from requirements.txt:
+Clone this repo to your computer
+```
+git clone https://github.com/gothaur/the_game.git
+```
+or simply download it to your computer
+
+### Installing
+
+To install required packages follow:
 
 Create new wirtual enviroment:
 ```
