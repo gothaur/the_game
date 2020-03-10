@@ -14,7 +14,7 @@ And there is a suprise. It can be ammo, health potion or a deadly mine. You'll n
 
 
 ==========================================================================================
-Instalation notice:
+# Instalation notice:
 
 To run my code you need pygame. Best way to do this is create new virtual environment and install package from requirements.txt:
 to create new wirtual enviroment type:
