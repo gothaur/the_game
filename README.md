@@ -14,7 +14,7 @@ And there is a suprise. It can be ammo, health potion or a deadly mine. You'll n
 
 
 ==========================================================================================
-### Installing
+## Installing
 
 to run this game you have to create new virtual enviroment and install packages from requirements.txt:
 
@@ -30,3 +30,5 @@ Install packages from requirements.txt:
 ```
 pip install -r requirements.txt
 ```
+### Author
+Michał Bartyński
