@@ -24,8 +24,6 @@ or simply download it to your computer
 
 ### Installing
 
-To install required packages follow:
-
 Create new wirtual enviroment:
 ```
 virtualenv -p python <your_virtualenv_name>
