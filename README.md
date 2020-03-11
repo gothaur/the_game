@@ -13,7 +13,7 @@ And there is a suprise. It can be ammo, health potion or a deadly mine. You'll n
 
 
 
-==========================================================================================
+=========================================================================
 ## Getting Started
 
 Clone this repo to your computer
